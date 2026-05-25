@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: apps-applications
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '2' # runs after infrastructure
+spec:
+  generators:
+    - git:
+        repoURL: ssh://git@git.nentwich.dev:2222/nentwich/kube-config.git
+        revision: HEAD
+        directories:
+          - path: apps/*
+  template:
+    metadata:
+      name: 'app-{{path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: ssh://git@git.nentwich.dev:2222/nentwich/kube-config.git
+        targetRevision: HEAD
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+        automated:
+          prune: false
+          selfHeal: false
