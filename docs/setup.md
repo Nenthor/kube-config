@@ -73,7 +73,7 @@ kubectl create secret generic my-secret --from-literal=password=supersecret --dr
 Encrypt the secret:
 
 ```
-kubeseal --format=yaml < secret.yaml > sealed-secret.yaml
+kubeseal --format=yaml -n NAMESPACE < secret.yaml > sealed-secret.yaml
 ```
 
 ## Run ArgoCD
