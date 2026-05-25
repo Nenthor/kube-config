@@ -22,3 +22,6 @@ spec:
     ignore:
       - group: 'metallb.io'
         kind: 'ConfigurationState'
+      - group: ''
+        kind: Secret
+        name: sealed-secrets-key*
