@@ -1,0 +1,31 @@
+# Create privileged proxmox-csi namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: proxmox-csi
+  labels:
+    pod-security.kubernetes.io/enforce: privileged
+---
+# Set node labels
+apiVersion: v1
+kind: Node
+metadata:
+  name: kube-central-1
+  labels:
+    topology.kubernetes.io/region: home
+    topology.kubernetes.io/zone: proxmox # Must match the exact physical Proxmox VE node name
+---
+# Proxmox user token as secret
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: proxmox-csi-config-secret
+  namespace: proxmox-csi
+spec:
+  encryptedData:
+    config.yaml: AgCCIO40qYeIDUqaKaMefznwaSthExd1nJEKgVTOvfR/cVUNpw8XtZAb0X0N/9Ft3zQbtDf6RcdK2BKA95HNAzzSUg+JwI70VP1s/vyz3YegG8UROZVeo4iHf/014BS1UKy6MeHsCiLn/Ktk27O909w1Vx7yA4cXq9S/itKeuHEWV4r5VNJvCqGbsfjEnnUCldWpQr99GcVEbDtLCU9eWUJWraF6vaZwRYuJDnPKqh3LzheitAlN+nqXRW9J/JBtKlEnyWmEAPOBxNFonWQ2UUOiBPzPZ0aIXQiAq+llX/KZ2xowrjzUdhVeXp+M1nYlMfCM7+sljbahWWy8bqNhI2JLnADCDpHZAGRCPZq6ULcsJxslmnpSfj9p48+Nz+n1EmPAn+syQ0x5SrdNKulY12+XHmWbfsJKe5mrp5uDT0Uah4VNqY+8HKYA+53uyt0vE9iZDVdemG0QDsBIbeMUikJ5AbqcDrGaAJQ2BRnghYqtFSIzx5h3KdpCArZfmVVH7zxBG7yIPZOeWr762xud4ncEeuilovTIEVg7xVPkHzPgvRs+jMMdh7ax3YQJ68x05+4RXJWF/i8zVmYpR+DbnZnJeJ7uStSLnFoMaKnsFWbqkeyOeVd+JHKSwIbN6jIX3IM//Z2rhAvOyVm1VM+Twe7f3gpSaWcEzq0LL6KC5u+f8pXwxyyMmpCatreNkyLToaYNkisv2vzTAs0HhCYzA/xhhR2PuXrZr47JNUcU5MlwzsiUKqRoJm+eLEe6HICo8g7CTQUYLK2L2uw4yqHz3eMMjsrwe66uwLAzyvTzJbZVcvRdf/F1opcvEl2xETihJ/QbHhZ7g9zbLXs0NEycYTfTunZM3A3GaoIURLj1tz7A9/OOhGFrOh7xf6MdzdOG0Vy0UPxrHA1ocJL9kkd36UqercBdgTeAMviQPewaFwWOwZtLRO+qjOWiebRYHu62Y6fuB+amzBUeCQs=
+  template:
+    metadata:
+      name: proxmox-csi-config-secret
+      namespace: proxmox-csi
+    type: Opaque
