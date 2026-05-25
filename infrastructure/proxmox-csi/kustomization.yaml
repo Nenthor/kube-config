@@ -5,7 +5,7 @@ generatorOptions:
   disableNameSuffixHash: true
 
 helmCharts:
-  - name: traefik
+  - name: proxmox-csi-plugin
     repo: oci://ghcr.io/sergelogvinov/charts
     version: 0.5.7
     releaseName: proxmox-csi-plugin
