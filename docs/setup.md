@@ -50,10 +50,10 @@ kubectl apply -f root-app.yaml
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
 ```
 
-**Port forward to [https://127.0.0.1:8080](https://127.0.0.1:8080):**
+**Port forward to [http://127.0.0.1:8080](http://127.0.0.1:8080):**
 
 ```
-kubectl port-forward svc/argocd-server -n argocd 8080:443
+kubectl port-forward svc/argocd-server -n argocd 8080:80
 ```
 
 ## Setup sealed-secrets
