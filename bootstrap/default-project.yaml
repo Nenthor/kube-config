@@ -18,10 +18,5 @@ spec:
     - group: '*'
       kind: '*'
   orphanedResources:
-    warn: true
-    ignore:
-      - group: 'metallb.io'
-        kind: 'ConfigurationState'
-      - group: ''
-        kind: Secret
-        name: sealed-secrets-key*
+    warn: false
+    ignore: []
