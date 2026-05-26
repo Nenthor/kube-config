@@ -6,11 +6,6 @@ helmCharts:
     repo: https://cloudnative-pg.github.io/charts
     version: 0.28.2
     releaseName: cnpg-operator
-    namespace: cnpg-system
+    namespace: cnpg-operator
     includeCRDs: true
     valuesFile: values.yaml
-
-resources:
-  - namespace.yaml
-  - superuser-secret.yaml
-  - cluster.yaml
