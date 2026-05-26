@@ -10,3 +10,13 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   kustomize.buildOptions: '--enable-helm'
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '-3' # apply this first
+data:
+  server.insecure: 'true'
