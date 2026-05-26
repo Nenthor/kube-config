@@ -49,7 +49,7 @@ ports:
 tlsStore:
   default:
     defaultCertificate:
-      secretName: wildcard-nentwich-dev
+      secretName: wildcard-nentwich-dev-tls
 
 extraObjects:
   # Secure TLS
@@ -60,11 +60,6 @@ extraObjects:
       namespace: traefik
     spec:
       minVersion: VersionTLS13 # minimum TLS 1.3
-      curvePreferences: # https://developers.cloudflare.com/ssl/post-quantum-cryptography/
-        - X25519MLKEM768
-        - SecP256r1MLKEM768
-        - X25519
-        - CurveP256
       # WARNING: sniStrict=true rejects clients not sending SNI.
       sniStrict: true
 
