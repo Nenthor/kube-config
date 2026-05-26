@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/postgresql.cnpg.io/cluster_v1.json
+
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres
+  namespace: database
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+spec:
+  instances: 1
+
+  storage:
+    size: 16Gi
+    storageClass: home-lvm-thin
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: postgres-superuser-credentials
