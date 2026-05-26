@@ -1,3 +1,7 @@
+# How to initialize the cluster
+
+This guide describes the initial setup and how to deploy everything in this repository with ArgoCD.
+
 ## Install k3s
 
 On first master:
@@ -40,10 +44,16 @@ kubectl apply -f root-app.yaml
 
 ## Logging into ArgoCD UI
 
+**Get initial admin password:**
+
 ```
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-kubectl port-forward svc/argocd-server -n argocd 8080:443
+```
 
+**Port forward to [https://127.0.0.1:8080](https://127.0.0.1:8080):**
+
+```
+kubectl port-forward svc/argocd-server -n argocd 8080:443
 ```
 
 ## Setup sealed-secrets
@@ -56,29 +66,19 @@ tar -xvzf kubeseal-0.37.0-linux-amd64.tar.gz kubeseal
 sudo install -m 755 kubeseal /usr/local/bin/kubeseal
 ```
 
-deploy sealed-secrets on git
+Encrypt `secret.yaml` to `sealed-secret.yaml`:
 
 ```
-helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
-helm repo update
-helm upgrade --install sealed-secrets sealed-secrets/sealed-secrets -n kube-system --set fullnameOverride=sealed-secrets-controller
+kubeseal -o=yaml < secret.yaml > sealed-secret.yaml
 ```
 
-Create secret:
+**BACKUP sealing certificate:**
 
-```
-kubectl create secret generic my-secret --from-literal=password=supersecret --dry-run=client -o yaml > secret.yaml
-```
+1. User kubernetes vscode extension
+2. Go to `kube-system` namespace
+3. find `sealed-secrets-keyxxx` under `Configurations/Secrets`
+4. Export `tls.crt` and `tls.key` to somewhere save
 
-Encrypt the secret:
+## Verify setup
 
-```
-kubeseal --format=yaml -n NAMESPACE < secret.yaml > sealed-secret.yaml
-```
-
-## Run ArgoCD
-
-```
-kubectl apply root-app.yaml
-kubectl port-forward svc/argocd-server -n argocd 8080:443
-```
+Go to ArgoCD UI and everything should be Synced and Healthy

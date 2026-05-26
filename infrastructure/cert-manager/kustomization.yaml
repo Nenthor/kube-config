@@ -11,4 +11,5 @@ helmCharts:
     valuesFile: values.yaml
 
 resources:
-  - config.yaml
+  - cloudflare-api-token-secret.yaml
+  - cluster-issuer.yaml
