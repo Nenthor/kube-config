@@ -1,0 +1,50 @@
+# Cloudflare API token as secret
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: cloudflare-api-token-secret
+  namespace: cert-manager
+spec:
+  encryptedData:
+    api-token: AgApup7fxPpgktYD+FDsyo/GgCDfkMP+2CZZ8mW8uCiB2TQJ9mX2Ygpj8Becz8kXanc2vfAL8UVrOJSjrAmGTKXlTMIhHdzQlf3N9Ao1v3cz6Y6/RMRCrBrX5UPQMQ+geJblqQVpli4X01EDG91m/j9hrDScxlw//sQEGPPC+s39aWYYR9Qpopx7HWZnWUCh1WdQ6qsQZWCNMGrvaksG3m49DCJcZpn+866jpOc3k/g+eOQS74nCM2Zl/Qa44cgNnJ5/0euJ5z0C9/y4wKzQpLNejJFB/HJTNA4mwEeqLvwTDQ1nfS3hhGwpbFDIrV1SQJP0akIA+mbypgeAMsr1z9iRAiT60n1NGUzMwVsCbJBYhT9QYlLpz4uyxXLyD2/Vpv2V5Xm72/X8HEhNtt+QtTuymIZTyfriuC2nRG2OGVcJ2aw5/HV9/IWLxTa1r3e3ynqvCa6sH1cunzuq7/ceFvJEKuMubDghJ6t5B6+0Nhx9VftyDwxQRHwM8NWEaGdV3UPm05KFxATBEI7CQR46CY4NVYOUUDGL765hmMrVxmvLleT7C4gwnupnGvbmGi01lgspuGjTi41ev52Y5ugcxSfm6J3q96Fi+ttxZcStzTKmschLj8tQlADxai7+VMp0EAMYaG1okDKhaVVIAI8vKinCys51J7Ug8vEwkA23uBZrgiXwdj4yovLSILuy0mP8UmRQOmPmHK06mxaqoOm8pQfUpbNE3gm4bEMcSxLcROxa6ggHo3S67O+N5xL2jI6Z4V5OaGvc4A==
+  template:
+    metadata:
+      name: cloudflare-api-token-secret
+      namespace: cert-manager
+    type: Opaque
+---
+# Let's Encrypt Staging (For Testing)
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: kube-acme@nentwich.dev
+    privateKeySecretRef:
+      name: letsencrypt-staging-account-key
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare-api-token-secret
+              key: api-token
+---
+# Let's Encrypt Production
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-production
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: kube-acme@nentwich.dev
+    privateKeySecretRef:
+      name: letsencrypt-production-account-key
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare-api-token-secret
+              key: api-token
