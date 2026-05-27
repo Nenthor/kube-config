@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/argoproj.io/appproject_v1alpha1.json
+
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -18,5 +20,5 @@ spec:
     - group: '*'
       kind: '*'
   orphanedResources:
-    warn: false
+    warn: true
     ignore: []
