@@ -3,4 +3,6 @@ kind: Kustomization
 
 resources:
   - postgres-superuser-credentials.yaml
+  # - app-db-secrets.yaml
   - cluster.yaml
+  # - app-databases.yaml

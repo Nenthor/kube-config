@@ -25,3 +25,12 @@ spec:
   enableSuperuserAccess: true
   superuserSecret:
     name: postgres-superuser-credentials
+
+  # Add user role per database
+  # managed:
+  #   roles:
+  #     - name: authentik
+  #       ensure: present
+  #       login: true
+  #       passwordSecret:
+  #         name: authentik-db-credentials

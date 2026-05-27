@@ -19,3 +19,13 @@ kubeseal -o yaml < secret.yaml > sealed-secret.yaml
 ```
 kubectl rollout restart deployment <SERVICE> -n <NAMESPACE>
 ```
+
+**Port forward the database to your local machine:**
+
+```
+kubectl port-forward -n cnpg-database svc/postgres-rw 5432:5432
+```
+
+## Helpful Links
+
+- schema.yaml: https://github.com/datreeio/CRDs-catalog
