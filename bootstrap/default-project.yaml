@@ -14,11 +14,10 @@ spec:
   sourceRepos:
     - '*'
   destinations:
-    - namespace: '*'
+    - namespace: 'kube-system'
+      server: '*'
+    - namespace: 'argocd'
       server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
-  orphanedResources:
-    warn: true
-    ignore: []

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/argoproj.io/appproject_v1alpha1.json
+
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: apps
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '-2' # apply this second
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: 'Application Project'
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: '*'
+      server: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  orphanedResources:
+    warn: true

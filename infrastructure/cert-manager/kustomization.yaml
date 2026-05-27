@@ -12,4 +12,5 @@ helmCharts:
 
 resources:
   - cloudflare-api-token-secret.yaml
+  - letsencrypt-account-secrets.yaml
   - cluster-issuer.yaml

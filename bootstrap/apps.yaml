@@ -18,7 +18,7 @@ spec:
     metadata:
       name: 'app-{{path.basename}}'
     spec:
-      project: default
+      project: apps
       source:
         repoURL: ssh://git@git.nentwich.dev:2222/nentwich/kube-config.git
         targetRevision: HEAD

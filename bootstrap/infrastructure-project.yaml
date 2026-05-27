@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/argoproj.io/appproject_v1alpha1.json
+
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: infrastructure
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '-2' # apply this second
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: 'Infrastructure Project'
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: '*'
+      server: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  orphanedResources:
+    warn: true
+    ignore:
+      # --- cert-manager --
+      - group: ''
+        kind: Secret
+        name: cert-manager-webhook-ca
+
+      # --- cnpg ---
+      - group: ''
+        kind: ConfigMap
+        name: cnpg-default-monitoring
+
+      # --- metallb ---
+      - group: metallb.io
+        kind: ConfigurationState
+        name: controller
+
+      # --- traefik ---
+      - group: ''
+        kind: Secret
+        name: wildcard-nentwich-dev-tls
