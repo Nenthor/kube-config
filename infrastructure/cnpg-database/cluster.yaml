@@ -12,7 +12,7 @@ spec:
 
   storage:
     size: 16Gi
-    storageClass: home-lvm-thin
+    storageClass: local-path
 
   resources:
     requests:

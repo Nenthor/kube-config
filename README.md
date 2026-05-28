@@ -5,6 +5,7 @@ This repository holds the entire infrastructure of the kubernetes cluster and is
 ## Specific Documentation
 
 - [Setup](docs/setup.md)
+- [Database](docs/database.md)
 
 ## Common Commands
 

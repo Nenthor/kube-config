@@ -4,24 +4,25 @@ This guide describes the initial setup and how to deploy everything in this repo
 
 ## Install k3s
 
-On first master:
-
 ```
-curl -sfL https://get.k3s.io | K3S_TOKEN="secret_join_token" sh -s - server \
-  --cluster-init \
-  --disable local-storage \
+curl -sfL https://get.k3s.io |  sh -s - server \
   --disable traefik \
   --disable servicelb
 ```
 
-On other masters:
+## Copy kube config
+
+Copy `cat /etc/rancher/k3s/k3s.yaml` and save it under `~/.kube/config`. Change the ip inside the config to the actual ip. You should then be able to use `kubectl`.
+
+## Restore SealedSecret key (only on restore)
 
 ```
-curl -sfL https://get.k3s.io | K3S_TOKEN="secret_join_token" sh -s - server \
-  --server https://<IP_OF_NODE_1>:6443 \
-  --disable local-storage \
-  --disable traefik \
-  --disable servicelb
+kubectl create secret tls sealed-secrets-key \
+  --cert=/home/david/Documents/Keys/Server/Proxmox/backup/sealed-secrets/tls.crt \
+  --key=/home/david/Documents/Keys/Server/Proxmox/backup/sealed-secrets/tls.key \
+  -n kube-system
+
+kubectl label secret sealed-secrets-key -n kube-system sealedsecrets.bitnami.com/sealed-secrets-key=active
 ```
 
 ## Setup ArgoCD
