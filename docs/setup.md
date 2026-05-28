@@ -2,6 +2,13 @@
 
 This guide describes the initial setup and how to deploy everything in this repository with ArgoCD.
 
+## Prerequisite
+
+You need to install the following on your pc:
+
+- `kubectl`
+  1. `sudo dnf install -y kubernetes-client`
+
 ## Install k3s
 
 ```
@@ -32,6 +39,8 @@ kubectl create namespace argocd
 kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 kubectl wait --namespace argocd --for=condition=ready pod --selector=app.kubernetes.io/name=argocd-server --timeout=90s
+
+kubectl get cm argocd-ssh-known-hosts-cm -n argocd -o json | jq --arg new_key "$(ssh-keyscan -p 2222 git.nentwich.dev 2>/dev/null)" '.data.ssh_known_hosts = (.data.ssh_known_hosts // "") + "\n" + $new_key' | kubectl apply -f -
 
 kubectl create secret generic git-repo-secret -n argocd \
   --from-literal=type=git \
