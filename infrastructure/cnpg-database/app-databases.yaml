@@ -1,12 +1,12 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/postgresql.cnpg.io/database_v1.json
 
-# apiVersion: postgresql.cnpg.io/v1
-# kind: Database
-# metadata:
-#   name: authentik-db
-#   namespace: cnpg-database
-# spec:
-#   name: authentik
-#   owner: authentik
-#   cluster:
-#     name: postgres
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: forgejo-db
+  namespace: cnpg-database
+spec:
+  name: forgejo
+  owner: forgejo
+  cluster:
+    name: postgres

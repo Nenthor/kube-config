@@ -27,10 +27,10 @@ spec:
     name: postgres-superuser-credentials
 
   # Add user role per database
-  # managed:
-  #   roles:
-  #     - name: authentik
-  #       ensure: present
-  #       login: true
-  #       passwordSecret:
-  #         name: authentik-db-credentials
+  managed:
+    roles:
+      - name: forgejo
+        ensure: present
+        login: true
+        passwordSecret:
+          name: forgejo-db-credentials
