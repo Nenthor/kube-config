@@ -12,4 +12,4 @@ helmCharts:
     valuesFile: values-forgejo.yaml
 
 resources:
-  - db-secrets.yaml
+  - db-secret.yaml
