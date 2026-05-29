@@ -91,4 +91,10 @@ kubeseal -o=yaml < secret.yaml > sealed-secret.yaml
 
 ## Verify setup
 
-Go to ArgoCD UI and everything should be Synced and Healthy
+Go to ArgoCD UI and everything should be Synced and Healthy.
+
+Sometimes the argocd server needs to be restarted to server under port 80 for ingress-route to work correctly:
+
+```
+kubectl rollout restart deployment argocd-server -n argocd
+```
