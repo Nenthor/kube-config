@@ -40,7 +40,6 @@ kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubuse
 
 kubectl wait --namespace argocd --for=condition=ready pod --selector=app.kubernetes.io/name=argocd-server --timeout=90s
 
-
 kubectl create secret generic git-repo-secret -n argocd \
   --from-literal=type=git \
   --from-literal=url=git@github.com:Nenthor/kube-config.git \

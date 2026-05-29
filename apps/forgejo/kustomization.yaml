@@ -12,7 +12,4 @@ helmCharts:
     valuesFile: values-forgejo.yaml
 
 resources:
-  - secrets.yaml
-  - pvcs.yaml
-  - postgres.yaml
-  - runner.yaml
+  - db-secrets.yaml
