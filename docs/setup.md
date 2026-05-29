@@ -40,11 +40,10 @@ kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubuse
 
 kubectl wait --namespace argocd --for=condition=ready pod --selector=app.kubernetes.io/name=argocd-server --timeout=90s
 
-kubectl get cm argocd-ssh-known-hosts-cm -n argocd -o json | jq --arg new_key "$(ssh-keyscan -p 2222 git.nentwich.dev 2>/dev/null)" '.data.ssh_known_hosts = (.data.ssh_known_hosts // "") + "\n" + $new_key' | kubectl apply -f -
 
 kubectl create secret generic git-repo-secret -n argocd \
   --from-literal=type=git \
-  --from-literal=url=ssh://git@git.nentwich.dev:2222/nentwich/kube-config.git \
+  --from-literal=url=git@github.com:Nenthor/kube-config.git \
   --from-file=sshPrivateKey=/home/david/Documents/Keys/Server/Proxmox/backup/argocd-deploy-keys/id_rsa
 
 kubectl label secret git-repo-secret -n argocd argocd.argoproj.io/secret-type=repository

@@ -10,7 +10,7 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: ssh://git@git.nentwich.dev:2222/nentwich/kube-config.git
+        repoURL: git@github.com:Nenthor/kube-config.git
         revision: HEAD
         directories:
           - path: apps/*
@@ -20,7 +20,7 @@ spec:
     spec:
       project: apps
       source:
-        repoURL: ssh://git@git.nentwich.dev:2222/nentwich/kube-config.git
+        repoURL: git@github.com:Nenthor/kube-config.git
         targetRevision: HEAD
         path: '{{path}}'
       destination:
