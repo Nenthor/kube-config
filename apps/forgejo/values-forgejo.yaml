@@ -19,7 +19,8 @@ service:
     type: LoadBalancer
     port: 22
     annotations:
-      metallb.universe.tf/loadBalancerIPs: '10.77.20.200'
+      metallb.io/loadBalancerIPs: '10.77.20.200'
+      metallb.io/allow-shared-ip: 'shared-traefik-forgejo-ip'
 
 ingress:
   enabled: true
