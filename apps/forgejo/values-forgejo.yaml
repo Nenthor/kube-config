@@ -19,11 +19,14 @@ service:
     type: LoadBalancer
     port: 22
     annotations:
-      metallb.universe.tf/loadBalancerIPs: '10.77.20.201'
+      metallb.universe.tf/loadBalancerIPs: '10.77.20.200'
 
 ingress:
   enabled: true
   className: traefik
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: 'true'
   hosts:
     - host: git.home.nentwich.dev
       paths:
