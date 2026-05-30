@@ -1,11 +1,5 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/traefik/traefik-helm-chart/refs/heads/master/traefik/values.schema.json
 
-logs:
-  general:
-    level: DEBUG
-  access:
-    enabled: true
-
 ingressClass:
   enabled: true
   isDefaultClass: true
@@ -42,7 +36,7 @@ ports:
         options: traefik-secure-tls@kubernetescrd
 
     http3:
-      enabled: false
+      enabled: true
       advertisedPort: 443
 
       # Attach middlewares directly to the entrypoint
