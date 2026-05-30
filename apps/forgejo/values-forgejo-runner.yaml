@@ -6,12 +6,11 @@ runner:
   config:
     create: true
 
-    existingSecret: 'forgejo-runner-registration'
+    existingInitSecret: 'forgejo-runner-registration'
     file:
       log:
         level: 'info'
       runner:
-        file: '.runner'
         capacity: 1
         labels:
           - 'ubuntu-latest:docker://ghcr.io/catthehacker/ubuntu:act-latest'
