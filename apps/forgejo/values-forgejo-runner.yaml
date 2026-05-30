@@ -11,7 +11,6 @@ runner:
       log:
         level: 'info'
       runner:
-        file: '.runner'
         capacity: 5
         labels:
           - 'ubuntu-latest:docker://ghcr.io/catthehacker/ubuntu:act-latest'
