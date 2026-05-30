@@ -30,7 +30,7 @@ ingress:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: 'true'
   hosts:
-    - host: git.home.nentwich.dev
+    - host: git.nentwich.dev
       paths:
         - path: /
           pathType: Prefix
@@ -54,7 +54,7 @@ gitea:
       NAME: forgejo
 
     server:
-      ROOT_URL: 'https://git.home.nentwich.dev'
+      ROOT_URL: 'https://git.nentwich.dev'
 
     actions:
       ENABLED: 'true'
