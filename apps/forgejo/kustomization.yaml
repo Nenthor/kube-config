@@ -12,8 +12,8 @@ helmCharts:
     valuesFile: values-forgejo.yaml
 
   - name: forgejo-runner
-    repo: oci://code.forgejo.org/forgejo-helm
-    version: 0.7.5
+    repo: oci://codeberg.org/wrenix/helm-charts
+    version: 0.7.6
     releaseName: forgejo-runner
     namespace: forgejo
     valuesFile: values-forgejo-runner.yaml
