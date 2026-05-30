@@ -4,9 +4,9 @@ knownLastVersion: true
 
 runner:
   config:
-    create: false
-    existingSecret: 'forgejo-runner-config'
+    create: true
 
+    instance: 'https://git.nentwich.dev'
     file:
       log:
         level: 'info'
@@ -28,6 +28,17 @@ runner:
           valid_volumes:
             - /certs/client
 
+      cache:
+        enabled: true
+        dir: '/data/.cache/actcache'
+
+      server:
+        connections:
+          runner-autoscale:
+            url: 'https://git.nentwich.dev/'
+            uuid: '045f7eb4-dacc-46dd-b416-bfd13d27e1c3'
+            token_file: '/secrets/runner-token/token'
+
 dind:
   resources:
     requests:
@@ -48,3 +59,18 @@ resources:
   limits:
     cpu: '1000m'
     memory: '1024Mi'
+
+volumes:
+  - name: runner-cache
+    persistentVolumeClaim:
+      claimName: forgejo-runner-cache-pvc
+  - name: auth-token-volume
+    secret:
+      secretName: forgejo-runner-token
+
+volumeMounts:
+  - name: runner-cache
+    mountPath: /data/.cache
+  - name: auth-token-volume
+    mountPath: /secrets/runner-token
+    readOnly: true
