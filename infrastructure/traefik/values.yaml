@@ -10,8 +10,6 @@ service:
   annotations:
     metallb.io/loadBalancerIPs: '10.77.20.200'
     metallb.io/allow-shared-ip: 'shared-traefik-forgejo-ip'
-  spec:
-    externalTrafficPolicy: Local
 
 ports:
   # HTTP Entrypoint
@@ -36,10 +34,6 @@ ports:
       tls:
         enabled: true
         options: traefik-secure-tls@kubernetescrd
-
-    proxyProtocol:
-      trustedIPs:
-        - '10.77.90.1'
 
     http3:
       enabled: true
