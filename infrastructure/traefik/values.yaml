@@ -35,6 +35,10 @@ ports:
         enabled: true
         options: traefik-secure-tls@kubernetescrd
 
+    proxyProtocol:
+      trustedIPs:
+        - '10.77.90.1'
+
     http3:
       enabled: true
       advertisedPort: 443
