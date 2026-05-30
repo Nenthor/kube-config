@@ -36,7 +36,7 @@ ports:
         options: traefik-secure-tls@kubernetescrd
 
     http3:
-      enabled: true
+      enabled: false
       advertisedPort: 443
 
       # Attach middlewares directly to the entrypoint
