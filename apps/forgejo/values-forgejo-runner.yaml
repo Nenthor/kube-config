@@ -4,7 +4,7 @@ knownLastVersion: true
 
 runner:
   config:
-    create: true
+    create: false
 
     instance: 'https://git.nentwich.dev'
     file:
