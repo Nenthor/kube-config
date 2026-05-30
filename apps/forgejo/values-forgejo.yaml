@@ -10,6 +10,7 @@ containerSecurityContext:
   runAsUser: 1001
   runAsGroup: 1001
   readOnlyRootFilesystem: true
+  runAsNonRoot: true
 
 service:
   http:
@@ -52,14 +53,11 @@ gitea:
       HOST: postgres-rw.cnpg-database.svc.cluster.local:5432
       NAME: forgejo
 
-    server:
-      ROOT_URL: 'https://git.home.nentwich.dev'
-      SSH_DOMAIN: 'git.home.nentwich.dev'
-      SSH_PORT: 22
-      SSH_LISTEN_PORT: 2222
-
     actions:
       ENABLED: 'true'
+
+  admin:
+    username: '' # delete the default admin user
 
   additionalConfigFromEnvs:
     - name: FORGEJO__DATABASE__USER
