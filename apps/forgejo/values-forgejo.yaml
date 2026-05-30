@@ -53,6 +53,9 @@ gitea:
       HOST: postgres-rw.cnpg-database.svc.cluster.local:5432
       NAME: forgejo
 
+    server:
+      ROOT_URL: 'https://git.home.nentwich.dev'
+
     actions:
       ENABLED: 'true'
 
