@@ -1,5 +1,7 @@
 # https://code.forgejo.org/forgejo-helm/forgejo-runner/src/branch/main/values.yaml
 
+knownLastVersion: true
+
 runner:
   config:
     create: true
