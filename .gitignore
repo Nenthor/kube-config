@@ -1,4 +1,3 @@
-
-/secret.yaml
-/sealed-secret.yaml
 /kompose
+/*secret*.yaml
+/*secret*.yml
