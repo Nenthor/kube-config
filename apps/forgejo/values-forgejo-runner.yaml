@@ -4,12 +4,24 @@ knownLastVersion: true
 
 runner:
   config:
-    create: false
+    create: true
 
-    instance: 'https://git.nentwich.dev'
+    # leave empty because runner registration token is deprecated
+    instance: ''
+    token: ''
+    name: ''
+
     file:
       log:
         level: 'info'
+
+      server:
+        connections:
+          runner-1:
+            url: 'https://git.nentwich.dev/'
+            uuid: '045f7eb4-dacc-46dd-b416-bfd13d27e1c3'
+            token_file: '/secrets/runner-token/token'
+
       runner:
         file: ''
         capacity: 5
@@ -31,13 +43,6 @@ runner:
       cache:
         enabled: true
         dir: '/data/.cache/actcache'
-
-      server:
-        connections:
-          runner-autoscale:
-            url: 'https://git.nentwich.dev/'
-            uuid: '045f7eb4-dacc-46dd-b416-bfd13d27e1c3'
-            token_file: '/secrets/runner-token/token'
 
 dind:
   resources:
