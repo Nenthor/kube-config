@@ -20,5 +20,5 @@ helmCharts:
 
 resources:
   - db-secret.yaml
-  - runner-config.yaml
+  - runner-init-secret.yaml
   - pvc-cache.yaml

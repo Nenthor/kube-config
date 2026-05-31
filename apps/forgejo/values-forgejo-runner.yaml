@@ -4,7 +4,34 @@ knownLastVersion: true
 
 runner:
   config:
-    create: false
+    create: true
+    existingInitSecret: 'forgejo-runner-init-secret'
+
+    file:
+      log:
+        level: info
+
+      runner:
+        capacity: 5
+        envs:
+          A_TEST_ENV_NAME_1: null
+          A_TEST_ENV_NAME_2: null
+          DOCKER_HOST: tcp://127.0.0.1:2376
+          DOCKER_TLS_VERIFY: 1
+          DOCKER_CERT_PATH: /certs/client
+        labels:
+          - 'ubuntu-latest:docker://ghcr.io/catthehacker/ubuntu:act-24.04-20260529'
+
+      container:
+        network: host
+        privileged: false
+        options: '-v /certs/client:/certs/client'
+        valid_volumes:
+          - '/certs/client'
+
+      cache:
+        enabled: true
+        dir: '/data/.cache/actcache'
 
 dind:
   resources:
