@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   kustomize.buildOptions: '--enable-helm'
+  timeout.reconciliation: 24h # handled by github webhook
 ---
 apiVersion: v1
 kind: ConfigMap

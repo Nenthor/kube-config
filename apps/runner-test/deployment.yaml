@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-app
-  namespace: test-deployment
+  namespace: runner-test
   annotations:
     argocd.argoproj.io/sync-wave: '0'
 spec:
@@ -19,7 +19,7 @@ spec:
         - name: forgejo-registry-secret
       containers:
         - name: test-container
-          image: git.nentwich.dev/nentwich/runner-test:latest
+          image: git.nentwich.dev/nentwich/runner-test:0.0.1
           ports:
             - containerPort: 80
           resources:

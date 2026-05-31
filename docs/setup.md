@@ -87,6 +87,11 @@ kubeseal -o=yaml < secret.yaml > sealed-secret.yaml
 3. find `sealed-secrets-keyxxx` under `Configurations/Secrets`
 4. Export `tls.crt` and `tls.key` to somewhere save
 
+## Final adjustments
+
+On first installation `argocd-secret` will probably fail. Use this to solve it:
+`kubectl annotate secret argocd-secret -n argocd sealedsecrets.bitnami.com/managed="true" --overwrite`
+
 ## Verify setup
 
 Go to ArgoCD UI and everything should be Synced and Healthy.

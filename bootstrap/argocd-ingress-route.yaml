@@ -27,4 +27,12 @@ spec:
           port: 80
           scheme: h2c
 
+    # github webhook call
+    - kind: Rule
+      match: Host(`argo.nentwich.dev`) && PathPrefix(`/api/webhook`)
+      priority: 20
+      services:
+        - name: argocd-server
+          port: 80
+
   tls: {}

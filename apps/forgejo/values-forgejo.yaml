@@ -59,6 +59,9 @@ gitea:
     actions:
       ENABLED: 'true'
 
+    webhook:
+      ALLOWED_HOST_LIST: external
+
   admin:
     username: '' # delete the default admin user
 
