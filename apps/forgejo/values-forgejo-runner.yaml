@@ -31,15 +31,7 @@ volumes:
   - name: runner-cache
     persistentVolumeClaim:
       claimName: forgejo-runner-cache-pvc
-  - name: runner-config-custom
-    secret:
-      secretName: forgejo-runner-secret
-      items:
-        - key: config.yaml
-          path: config.yaml
 
 volumeMounts:
   - name: runner-cache
     mountPath: /data/.cache
-  - name: runner-config-custom
-    mountPath: /config
