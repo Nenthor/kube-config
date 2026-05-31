@@ -27,12 +27,12 @@ spec:
           port: 80
           scheme: h2c
 
-    # github webhook call
-    - kind: Rule
-      match: Host(`argo.nentwich.dev`) && PathPrefix(`/api/webhook`)
-      priority: 20
-      services:
-        - name: argocd-server
-          port: 80
+    # github webhook call - DISABLED: Because Github webhooks does not support ipv6 - https://github.com/orgs/community/discussions/117362
+    # - kind: Rule
+    #   match: Host(`argo.nentwich.dev`) && PathPrefix(`/api/webhook`)
+    #   priority: 20
+    #   services:
+    #     - name: argocd-server
+    #       port: 80
 
   tls: {}

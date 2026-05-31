@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   kustomize.buildOptions: '--enable-helm'
-  timeout.reconciliation: 24h # handled by github webhook
+  timeout.reconciliation: 1m # in the future: handled by github webhook, but right now GitHub does not support ipv6 for webhooks
 ---
 apiVersion: v1
 kind: ConfigMap
