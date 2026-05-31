@@ -4,7 +4,7 @@ knownLastVersion: true
 
 runner:
   config:
-    existingSecret: 'forgejo-runner-secret'
+    create: false
 
 dind:
   resources:
@@ -31,7 +31,15 @@ volumes:
   - name: runner-cache
     persistentVolumeClaim:
       claimName: forgejo-runner-cache-pvc
+  - name: runner-config
+    secret:
+      secretName: forgejo-runner-secret
+      items:
+        - key: config.yaml
+          path: config.yaml
 
 volumeMounts:
   - name: runner-cache
     mountPath: /data/.cache
+  - name: runner-config
+    mountPath: /config
