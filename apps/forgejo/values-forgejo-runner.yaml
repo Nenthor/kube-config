@@ -4,45 +4,7 @@ knownLastVersion: true
 
 runner:
   config:
-    create: true
-
-    # leave empty because runner registration token is deprecated
-    instance: ''
-    token: ''
-    name: ''
-
-    file:
-      log:
-        level: 'info'
-
-      server:
-        connections:
-          runner-1:
-            url: 'https://git.nentwich.dev/'
-            uuid: '045f7eb4-dacc-46dd-b416-bfd13d27e1c3'
-            token_file: '/secrets/runner-token/token'
-
-      runner:
-        file: ''
-        capacity: 5
-        labels:
-          - 'ubuntu-latest:docker://ghcr.io/catthehacker/ubuntu:act-latest'
-
-        envs:
-          DOCKER_HOST: tcp://127.0.0.1:2376
-          DOCKER_TLS_VERIFY: 1
-          DOCKER_CERT_PATH: /certs/client
-
-        container:
-          network: host
-          privileged: false
-          options: -v /certs/client:/certs/client
-          valid_volumes:
-            - /certs/client
-
-      cache:
-        enabled: true
-        dir: '/data/.cache/actcache'
+    existingSecret: 'forgejo-runner-secret'
 
 dind:
   resources:
@@ -51,7 +13,7 @@ dind:
       memory: '128Mi'
     limits:
       cpu: '2000m'
-      memory: '2048Mi'
+      memory: '2Gi'
 
 securityContext:
   privileged: true
@@ -69,13 +31,7 @@ volumes:
   - name: runner-cache
     persistentVolumeClaim:
       claimName: forgejo-runner-cache-pvc
-  - name: auth-token-volume
-    secret:
-      secretName: forgejo-runner-token
 
 volumeMounts:
   - name: runner-cache
     mountPath: /data/.cache
-  - name: auth-token-volume
-    mountPath: /secrets/runner-token
-    readOnly: true
