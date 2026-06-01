@@ -13,7 +13,7 @@ spec:
       match: Host(`chat.home.nentwich.dev`)
       priority: 10
       services:
-        - name: open-webui-server
+        - name: open-webui
           port: 80
 
   tls: {}
