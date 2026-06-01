@@ -1,7 +1,7 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: route
+  name: screenshare-webrtc-route
   namespace: screenshare-webrtc
   annotations:
     argocd.argoproj.io/sync-wave: '2'
@@ -13,7 +13,7 @@ spec:
       match: Host(`screenshare.nentwich.dev`)
       priority: 10
       services:
-        - name: service
+        - name: screenshare-webrtc-service
           port: 80
 
   tls: {}

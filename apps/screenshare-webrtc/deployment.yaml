@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app
+  name: screenshare-webrtc-app
   namespace: screenshare-webrtc
   annotations:
     argocd.argoproj.io/sync-wave: '0'
@@ -9,14 +9,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app
+      app: screenshare-webrtc-app
   template:
     metadata:
       labels:
-        app: app
+        app: screenshare-webrtc-app
     spec:
       containers:
-        - name: test-container
+        - name: screenshare-webrtc-container
           image: git.nentwich.dev/nentwich/screenshare-webrtc:0.0.2
           ports:
             - containerPort: 80

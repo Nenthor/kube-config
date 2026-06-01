@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: screenshare-webrtc-service
   namespace: screenshare-webrtc
   annotations:
     argocd.argoproj.io/sync-wave: '1'
 spec:
   selector:
-    app: app
+    app: screenshare-webrtc-app
   ports:
     - protocol: TCP
       port: 80
