@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: screenshare-webrtc
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: test-container
+          image: git.nentwich.dev/nentwich/screenshare-webrtc:0.0.2
+          ports:
+            - containerPort: 80
+          env:
+            - name: PORT
+              value: '80'
+          resources:
+            requests:
+              memory: 32Mi
+              cpu: 1m
+            limits:
+              cpu: 10m
+              memory: 128Mi
