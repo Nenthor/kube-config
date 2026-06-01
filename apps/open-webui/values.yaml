@@ -1,0 +1,14 @@
+ollama:
+  enabled: false
+
+ollamaUrls:
+  - http://ollama.home.nentwich.dev:11434
+
+pipelines:
+  enabled: false
+tika:
+  enabled: false
+
+persistence:
+  enabled: true
+  size: 16Gi
