@@ -51,7 +51,6 @@ loki:
     retention_delete_delay: 2h
     retention_delete_worker_count: 15
     delete_request_store: filesystem
-    shared_store: filesystem
 
 # Disable all scaling features, caches, and test workloads to save RAM
 ruler: { enabled: false }
