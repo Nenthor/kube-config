@@ -36,23 +36,11 @@ grafana:
     dashboards:
       enabled: true
       env:
-        - name: HEALTH_PORT
-          value: '8081'
+        HEALTH_PORT: '8081'
     datasources:
       enabled: true
       env:
-        - name: HEALTH_PORT
-          value: '8082'
-    alerts:
-      enabled: false
-      env:
-        - name: HEALTH_PORT
-          value: '8083'
-    notifiers:
-      enabled: false
-      env:
-        - name: HEALTH_PORT
-          value: '8084'
+        HEALTH_PORT: '8082'
 
   additionalDataSources:
     - name: Loki
