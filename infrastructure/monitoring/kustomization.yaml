@@ -26,5 +26,5 @@ helmCharts:
     includeCRDs: true
     valuesFile: values-alloy.yaml
 
-# resources:
-#   - pvc-alerts.yaml
+resources:
+  - grafana-admin-credentials.yaml
