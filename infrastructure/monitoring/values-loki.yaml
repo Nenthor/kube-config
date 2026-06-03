@@ -9,6 +9,13 @@ singleBinary:
     storageClass: local-path
     size: 10Gi
 
+write:
+  replicas: 0
+read:
+  replicas: 0
+backend:
+  replicas: 0
+
 loki:
   auth_enabled: false
 
