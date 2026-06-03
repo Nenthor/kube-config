@@ -32,6 +32,28 @@ grafana:
       - monitoring.home.nentwich.dev
     tls: []
 
+  sidecar:
+    dashboards:
+      enabled: true
+      env:
+        - name: HEALTH_PORT
+          value: '8081'
+    datasources:
+      enabled: true
+      env:
+        - name: HEALTH_PORT
+          value: '8082'
+    alerts:
+      enabled: false
+      env:
+        - name: HEALTH_PORT
+          value: '8083'
+    notifiers:
+      enabled: false
+      env:
+        - name: HEALTH_PORT
+          value: '8084'
+
   additionalDataSources:
     - name: Loki
       type: loki
