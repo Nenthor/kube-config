@@ -7,6 +7,10 @@ defaultRules:
 
 grafana:
   enabled: true
+
+  initChownData:
+    enabled: false
+
   defaultDashboardsEnabled: false
   resources:
     requests:
