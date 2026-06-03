@@ -30,7 +30,9 @@ grafana:
     ingressClassName: traefik
     hosts:
       - monitoring.home.nentwich.dev
-    tls: []
+    tls:
+      - hosts:
+          - monitoring.home.nentwich.dev
 
   sidecar:
     dashboards:
