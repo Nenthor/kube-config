@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: pvc-low-space-alerts
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+spec:
+  groups:
+    - name: pvc.rules
+      rules:
+        - alert: PVCLowSpaceAlert
+          # Triggers if available bytes divided by capacity is <= 25%
+          expr: kubelet_volume_stats_available_bytes / kubelet_volume_stats_capacity_bytes <= 0.25
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'PVC {{ $labels.persistentvolumeclaim }} is low on space'
+            description: 'The PVC {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} has less than 25% space remaining.'

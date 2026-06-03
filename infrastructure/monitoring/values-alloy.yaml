@@ -1,0 +1,95 @@
+# https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/values.yaml
+
+alloy:
+  enableReporting: false
+
+  mounts:
+    varlog: true
+    dockercontainers: false
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+    limits:
+      cpu: 200m
+      memory: 250Mi
+
+  configMap:
+    create: true
+    content: |
+      logging {
+        level  = "info"
+        format = "logfmt"
+      }
+
+      // 1. Discover pods running on the local node only
+      discovery.kubernetes "pods" {
+        role = "pod"
+        selectors {
+          role = "pod"
+          field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
+        }
+      }
+
+      // 2. Extract pod metadata once per pod and map it to physical file locations
+      discovery.relabel "pod_logs" {
+        targets = discovery.kubernetes.pods.targets
+
+        rule {
+          source_labels = ["__meta_kubernetes_namespace"]
+          target_label  = "namespace"
+        }
+
+        rule {
+          source_labels = ["__meta_kubernetes_pod_name"]
+          target_label  = "pod"
+        }
+
+        rule {
+          source_labels = ["__meta_kubernetes_pod_container_name"]
+          target_label  = "container"
+        }
+
+        rule {
+          source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_container_name"]
+          separator     = "/"
+          target_label  = "job"
+        }
+
+        // Creates the host log path target (e.g., /var/log/pods/<namespace>_<pod>_<uid>/<container>/*.log)
+        rule {
+          source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+          separator     = "/"
+          action        = "replace"
+          replacement   = "/var/log/pods/*$1/*.log"
+          target_label  = "__path__"
+        }
+      }
+
+      // 3. Match the resolved wildcards on the local filesystem
+      local.file_match "pod_logs" {
+        path_targets = discovery.relabel.pod_logs.output
+      }
+
+      // 4. Efficiently tail the logs from disk
+      loki.source.file "pod_logs" {
+        targets    = local.file_match.pod_logs.targets
+        forward_to = [loki.process.pod_logs.receiver]
+      }
+
+      // 5. Parse CRI container runtime headers (without line-by-line regex)
+      loki.process "pod_logs" {
+        stage.cri {}
+        forward_to = [loki.write.endpoint.receiver]
+      }
+
+      // 6. Push to monolithic Loki
+      loki.write "endpoint" {
+        endpoint {
+          url = "http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push"
+        }
+      }
+
+serviceMonitor:
+  enabled: true

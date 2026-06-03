@@ -52,6 +52,12 @@ tlsStore:
     defaultCertificate:
       secretName: wildcard-nentwich-dev-tls
 
+metrics:
+  prometheus:
+    addEntryPointsLabels: true # https or http
+    addRoutersLabels: true # host & path
+    addServicesLabels: true # backend
+
 extraObjects:
   # Secure TLS
   - apiVersion: traefik.io/v1alpha1
