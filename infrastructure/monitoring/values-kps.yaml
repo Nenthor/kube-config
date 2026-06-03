@@ -95,10 +95,6 @@ prometheus:
   prometheusSpec:
     replicas: 1
     retention: 7d
-    additionalMetricRelabelConfigs:
-      - sourceLabels: [__name__]
-        action: drop
-        regex: 'go_.*|process_.*'
     resources:
       requests:
         cpu: 100m
@@ -135,6 +131,16 @@ nodeExporter:
 
 kubelet:
   enabled: true # Container CPU/RAM and PVC disk metrics
+  serviceMonitor:
+    enabled: true
+    metricRelabelings:
+      - sourceLabels: [__name__]
+        action: drop
+        regex: 'go_.*|process_.*|apiserver_.*|scheduler_.*'
+    cAdvisorMetricRelabelings:
+      - sourceLabels: [__name__]
+        action: drop
+        regex: 'go_.*|process_.*|apiserver_.*|scheduler_.*'
 
 kube-state-metrics:
   enabled: true
@@ -145,6 +151,13 @@ kube-state-metrics:
     limits:
       cpu: 50m
       memory: 64Mi
+  prometheus:
+    monitor:
+      enabled: true
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          action: drop
+          regex: 'go_.*|process_.*|apiserver_.*|scheduler_.*'
 
 prometheusOperator:
   enabled: true
