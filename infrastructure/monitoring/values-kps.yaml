@@ -16,6 +16,9 @@ grafana:
   initChownData:
     enabled: false
 
+  serviceMonitor:
+    selfMonitor: false
+
   defaultDashboardsEnabled: false
   resources:
     requests:
@@ -61,6 +64,10 @@ grafana:
 
 alertmanager:
   enabled: true
+
+  serviceMonitor:
+    selfMonitor: false
+
   alertmanagerSpec:
     replicas: 1
     resources:
@@ -81,9 +88,17 @@ alertmanager:
 
 prometheus:
   enabled: true
+
+  serviceMonitor:
+    selfMonitor: false
+
   prometheusSpec:
     replicas: 1
     retention: 7d
+    additionalMetricRelabelConfigs:
+      - sourceLabels: [__name__]
+        action: drop
+        regex: 'go_.*|process_.*'
     resources:
       requests:
         cpu: 100m
