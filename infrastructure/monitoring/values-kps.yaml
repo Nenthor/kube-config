@@ -128,43 +128,11 @@ kubeProxy:
   enabled: false
 nodeExporter:
   enabled: false
+prometheusOperator:
+  enabled: false
+kube-state-metrics:
+  enabled: false
 
 kubelet:
   enabled: true # Container CPU/RAM and PVC disk metrics
-  serviceMonitor:
-    enabled: true
-    metricRelabelings:
-      - sourceLabels: [__name__]
-        action: drop
-        regex: 'go_.*|process_.*|apiserver_.*|scheduler_.*'
-    cAdvisorMetricRelabelings:
-      - sourceLabels: [__name__]
-        action: drop
-        regex: 'go_.*|process_.*|apiserver_.*|scheduler_.*'
 
-kube-state-metrics:
-  enabled: true
-  resources:
-    requests:
-      cpu: 10m
-      memory: 32Mi
-    limits:
-      cpu: 50m
-      memory: 64Mi
-  prometheus:
-    monitor:
-      enabled: true
-      metricRelabelings:
-        - sourceLabels: [__name__]
-          action: drop
-          regex: 'go_.*|process_.*|apiserver_.*|scheduler_.*'
-
-prometheusOperator:
-  enabled: true
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
