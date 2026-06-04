@@ -12,3 +12,4 @@ helmCharts:
 
 resources:
   - wildcard-nentwich-dev-cert.yaml
+  - immich-ingress-routes.yaml

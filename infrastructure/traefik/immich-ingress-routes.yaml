@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: immich-external-service
+  namespace: traefik
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 2283
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: immich-external-service
+  namespace: traefik
+subsets:
+  - addresses:
+      - ip: 10.77.20.4
+    ports:
+      - name: http
+        port: 2283
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: immich-ingress-route
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`immich.nentwich.dev`)
+      services:
+        - name: immich-external-service
+          port: 80
+  tls: {}
