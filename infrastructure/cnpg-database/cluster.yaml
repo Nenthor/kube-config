@@ -32,5 +32,7 @@ spec:
       - name: forgejo
         ensure: present
         login: true
+        inherit: true
+        connectionLimit: -1
         passwordSecret:
           name: forgejo-db-credentials
