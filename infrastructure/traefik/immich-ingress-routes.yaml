@@ -4,22 +4,11 @@ metadata:
   name: immich-external-service
   namespace: traefik
 spec:
+  type: ExternalName
+  externalName: immich.nentwich.backend
   ports:
     - name: http
-      port: 80
-      targetPort: 2283
----
-apiVersion: v1
-kind: Endpoints
-metadata:
-  name: immich-external-service
-  namespace: traefik
-subsets:
-  - addresses:
-      - ip: 10.77.20.4
-    ports:
-      - name: http
-        port: 2283
+      port: 2283
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
