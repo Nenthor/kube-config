@@ -8,6 +8,7 @@ images:
 resources:
   - deployment.yaml
   - db-secret.yaml
+  - admin-token.yaml
   - ingress-route.yaml
   - service.yaml
   - pvc.yaml

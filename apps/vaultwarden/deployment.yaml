@@ -26,7 +26,12 @@ spec:
             - name: DOMAIN
               value: 'https://vw.home.nentwich.dev'
             - name: SIGNUPS_ALLOWED
-              value: 'true'
+              value: 'false'
+            - name: ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: admin-token-secret
+                  key: ADMIN_TOKEN
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:

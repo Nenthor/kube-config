@@ -1,0 +1,17 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: admin-token-secret
+  namespace: vaultwarden
+  annotations:
+    argocd.argoproj.io/sync-wave: '-1'
+spec:
+  encryptedData:
+    ADMIN_TOKEN: AgAhNg4PCrlOH4j8emQ5fZ4JZIiM8/090jkdTg5IKsnX+ANCce7vs/Kbfb2K1bsh60cjyKvTp51+YU+rIc22jx0FrJQOr8moY4arnAdt6qehvnPOdNCGhchNV/sz+XpbqvaySSJe05FJgM5R1sLcGEnW1112DCP1Ux7wNILNlKW2cQwLPvQt7P7miWV/zZlCRIasSEvmfNIgctw4x81RrNjqZH30PLDphG32MhZ2j+zDyLMOOBs0xV8xbAxA5HqIadAdBBeaTGqMWBvJhcY+ElykfFd/u+u200/R3d3L8FzavAnO/Jo6tEfPwaoaGITMbufx8T/1LIrTAfM50ggiLPBiiDVsLebwE6IdyDi2waQMGq58GlhfJIUhInt/XkG/49qcTrpP52Kk9htzmwZx1BXn4Tr+yT7JxbEGjVHGNMJCnYxEPpfjbjkTsVyavblUIK59f9ItVyC8mh4iRc4+6GCVNhkd4U/QOPhFkFWtmiyK663mEj53+y40vgB+cL06h9HYFNG7y3O/ZVmNLxRO+gctaoZhX226v/nMVzMS7IcfKNiIXiPZcHXqhwWAnAd2L/t0Noo+tX8qkJ4sRi7mlYGCHo0Ju8ZLvd9Wj360f5kMrLvVDGuT/+YUlJ1BGNeZHvwZSBNLVnNhs87Ea2D7mnV/qDmq/hNb+CXVmv1NUUUuF9Q7JRBTCTEDUvuV9evGMAxS7TxDMYdtKDzXPnTSLTnLkEyA6sgettb+ivyC7rvHmmfrJK4kfmWb1ffvCAMIDDWlsKZVz5b70W1t/RymN+tsHvu6wTbdgEyYddlFM1Ns3fNt0AbJDQJa+DH3FqQK3w7zrOlhatDcGd1zHjDYMOKZF2tD3XZMtiV/nVT3gKv7pmaDjltLng==
+  template:
+    metadata:
+      name: admin-token-secret
+      namespace: vaultwarden
+      annotations:
+        argocd.argoproj.io/sync-wave: '-1'
+    type: Opaque
