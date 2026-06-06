@@ -10,7 +10,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`vw.nentwich.dev`)
+      match: Host(`vw.home.nentwich.dev`)
       services:
         - name: vaultwarden-service
           port: 80

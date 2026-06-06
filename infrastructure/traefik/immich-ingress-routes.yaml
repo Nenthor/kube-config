@@ -22,7 +22,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`immich.nentwich.dev`)
+      match: Host(`immich.home.nentwich.dev`)
       services:
         - name: immich-external-service
           port: 2283

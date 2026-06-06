@@ -24,7 +24,7 @@ spec:
             - containerPort: 80
           env:
             - name: DOMAIN
-              value: 'https://vw.nentwich.dev'
+              value: 'https://vw.home.nentwich.dev'
             - name: SIGNUPS_ALLOWED
               value: 'false'
             - name: ADMIN_TOKEN
