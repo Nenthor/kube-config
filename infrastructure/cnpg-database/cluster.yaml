@@ -36,3 +36,11 @@ spec:
         connectionLimit: -1
         passwordSecret:
           name: forgejo-db-credentials
+
+      - name: vaultwarden
+        ensure: present
+        login: true
+        inherit: true
+        connectionLimit: -1
+        passwordSecret:
+          name: vaultwarden-db-credentials

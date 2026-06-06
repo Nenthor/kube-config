@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vaultwarden-app
+  namespace: vaultwarden
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: vaultwarden-app
+  template:
+    metadata:
+      labels:
+        app: vaultwarden-app
+    spec:
+      containers:
+        - name: vaultwarden-container
+          image: vaultwarden/server:1.36.0-alpine
+          ports:
+            - containerPort: 80
+          env:
+            - name: DOMAIN
+              value: 'https://vw.home.nentwich.dev'
+            - name: SIGNUPS_ALLOWED
+              value: 'true'
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: vaultwarden-db-secret
+                  key: DATABASE_URL
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 400m
+              memory: 512Mi
+          volumeMounts:
+            - mountPath: /data
+              name: vaultwarden-data
+      volumes:
+        - name: vaultwarden-data
+          persistentVolumeClaim:
+            claimName: vaultwarden-pvc
