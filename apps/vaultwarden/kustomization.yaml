@@ -10,3 +10,4 @@ resources:
   - db-secret.yaml
   - ingress-route.yaml
   - service.yaml
+  - pvc.yaml
