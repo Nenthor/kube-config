@@ -1,24 +1,28 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
+  "timezone": "Europe/Berlin",
   "packageRules": [
     {
       "description": "Automerge minor and patch updates for stable releases (>= 1.0.0)",
       "matchUpdateTypes": ["minor", "patch"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true,
-      "automergeSchedule": ["* 5 * * *"]
+      "ignoreTests": true,
+      "automergeSchedule": ["* 3-5 * * *"]
     },
     {
       "description": "Automerge only patch updates for pre-stable releases (0.x.x)",
       "matchUpdateTypes": ["patch"],
       "matchCurrentVersion": "/^0/",
       "automerge": true,
-      "automergeSchedule": ["* 5 * * *"]
+      "ignoreTests": true,
+      "automergeSchedule": ["* 3-5 * * *"]
     },
     {
       "description": "Require manual pull request review and approval for all major version updates.",
       "matchUpdateTypes": ["major"],
+      "ignoreTests": true,
       "automerge": false
     }
   ],
