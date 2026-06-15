@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infra-bot-app
+  namespace: infra-bot
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: infra-bot-app
+  template:
+    metadata:
+      labels:
+        app: infra-bot-app
+    spec:
+      imagePullSecrets:
+        - name: git-registry-secret
+      containers:
+        - name: infra-bot-container
+          image: git.nentwich.dev/nentwich/infra-bot:1.0.0
+          envFrom:
+            - secretRef:
+                name: infra-bot-secrets
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
