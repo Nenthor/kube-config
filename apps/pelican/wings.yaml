@@ -34,3 +34,5 @@ spec:
       services:
         - name: pelican-wings-service
           port: 80
+
+  tls: {}
