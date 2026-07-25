@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
   - redis.yaml
   - panel.yaml
-  - panel-secrets.yaml
+  - panel-credentials.yaml
   - panel-storage.yaml
   - ingress-route.yaml
 images:
