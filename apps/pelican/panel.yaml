@@ -18,7 +18,7 @@ spec:
           image: ghcr.io/pelican-dev/panel:1.0.0-beta35
           envFrom:
             - secretRef:
-                name: panel-secret
+                name: pelican-panel-credentials
           ports:
             - containerPort: 80
               name: http
