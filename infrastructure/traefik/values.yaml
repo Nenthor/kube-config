@@ -89,7 +89,7 @@ extraObjects:
         frameDeny: true
         contentTypeNosniff: true
         browserXssFilter: true
-        referrerPolicy: same-origin
+        referrerPolicy: strict-origin-when-cross-origin
         customResponseHeaders:
           X-Robots-Tag: 'none,noarchive,nosnippet,notranslate,noimageindex'
 

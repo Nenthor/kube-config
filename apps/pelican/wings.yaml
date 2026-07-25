@@ -35,4 +35,7 @@ spec:
         - name: pelican-wings-service
           port: 80
 
-  tls: {}
+  tls:
+    options:
+      name: pelican-tls
+      namespace: traefik
