@@ -19,4 +19,4 @@ spec:
   tls:
     options:
       name: pelican-tls
-      namespace: traefik
+      namespace: pelican
