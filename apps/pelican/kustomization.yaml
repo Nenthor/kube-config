@@ -7,7 +7,6 @@ resources:
   - panel-storage.yaml
   - ingress-route.yaml
   - wings.yaml
-  - traefik-tls-option.yaml
 images:
   - name: redis
     newTag: 8.8.1-alpine

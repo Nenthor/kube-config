@@ -71,7 +71,7 @@ extraObjects:
       name: secure-tls
       namespace: traefik
     spec:
-      minVersion: VersionTLS13 # minimum TLS 1.3
+      minVersion: VersionTLS12 # minimum TLS 1.2
       # WARNING: sniStrict=true rejects clients not sending SNI.
       sniStrict: true
 

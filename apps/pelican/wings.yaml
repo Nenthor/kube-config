@@ -35,7 +35,4 @@ spec:
         - name: pelican-wings-service
           port: 80
 
-  tls:
-    options:
-      name: pelican-tls
-      namespace: pelican
+  tls: {}
