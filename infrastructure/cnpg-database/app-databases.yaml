@@ -19,3 +19,14 @@ spec:
   owner: vaultwarden
   cluster:
     name: postgres
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: pelican-db
+  namespace: cnpg-database
+spec:
+  name: pelican
+  owner: pelican
+  cluster:
+    name: postgres

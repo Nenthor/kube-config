@@ -44,3 +44,11 @@ spec:
         connectionLimit: -1
         passwordSecret:
           name: vaultwarden-db-credentials
+
+      - name: pelican
+        ensure: present
+        login: true
+        inherit: true
+        connectionLimit: -1
+        passwordSecret:
+          name: pelican-db-credentials

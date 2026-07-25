@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pelican-panel
+  namespace: pelican
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pelican-panel
+  template:
+    metadata:
+      labels:
+        app: pelican-panel
+    spec:
+      containers:
+        - name: panel
+          image: ghcr.io/pelican-dev/panel:1.0.0-beta35
+          envFrom:
+            - secretRef:
+                name: panel-secret
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - name: panel-data
+              mountPath: /pelican-data
+          resources:
+            requests:
+              cpu: 10m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: panel-data
+          persistentVolumeClaim:
+            claimName: panel-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pelican-panel-service
+  namespace: pelican
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+spec:
+  selector:
+    app: pelican-panel
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
