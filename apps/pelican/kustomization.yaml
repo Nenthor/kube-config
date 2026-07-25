@@ -6,6 +6,7 @@ resources:
   - panel-credentials.yaml
   - panel-storage.yaml
   - ingress-route.yaml
+  - wings.yaml
 images:
   - name: redis
     newTag: 8.8.1-alpine
