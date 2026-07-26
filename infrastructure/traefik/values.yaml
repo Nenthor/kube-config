@@ -61,7 +61,7 @@ ports:
 
 tlsOptions:
   default:
-    minVersion: VersionTLS13
+    minVersion: VersionTLS12
     sniStrict: true
 
 tlsStore:
