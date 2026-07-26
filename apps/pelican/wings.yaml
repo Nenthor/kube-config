@@ -19,7 +19,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`gamepanel-wings.nentwich.dev`)
+    - match: Host(`gamepanel-wings.civtale.de`)
       kind: Rule
       services:
         - name: pelican-wings-service
