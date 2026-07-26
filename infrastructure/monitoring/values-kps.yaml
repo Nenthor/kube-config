@@ -33,17 +33,6 @@ grafana:
     accessModes: ['ReadWriteOnce']
     size: 2Gi
 
-  ingress:
-    enabled: true
-    ingressClassName: traefik
-    annotations:
-      traefik.ingress.kubernetes.io/router.tls: 'true'
-    hosts:
-      - monitoring.home.nentwich.dev
-    tls:
-      - hosts:
-          - monitoring.home.nentwich.dev
-
   sidecar:
     dashboards:
       enabled: true
@@ -95,6 +84,14 @@ prometheus:
   prometheusSpec:
     replicas: 1
     retention: 7d
+    retentionSize: 8GiB
+    scrapeInterval: 30s
+
+    additionalMetricRelabelings:
+      - sourceLabels: [__name__]
+        action: keep
+        regex: '^(container_cpu_usage_seconds_total|container_memory_working_set_bytes|kubelet_volume_stats_available_bytes)$'
+
     resources:
       requests:
         cpu: 100m
@@ -135,4 +132,12 @@ kube-state-metrics:
 
 kubelet:
   enabled: true # Container CPU/RAM and PVC disk metrics
-
+  serviceMonitor:
+    metricRelabelings:
+      - sourceLabels: [__name__]
+        action: keep
+        regex: '^(container_cpu_usage_seconds_total|container_memory_working_set_bytes|kubelet_volume_stats_available_bytes)$'
+    cAdvisorMetricRelabelings:
+      - sourceLabels: [__name__]
+        action: keep
+        regex: '^(container_cpu_usage_seconds_total|container_memory_working_set_bytes|kubelet_volume_stats_available_bytes)$'
