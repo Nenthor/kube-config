@@ -41,9 +41,9 @@ ports:
         enabled: true
         options: traefik-secure-tls@kubernetescrd
 
-      # middlewares:
-      #   - 'traefik-secure-headers@kubernetescrd'
-      #   - 'traefik-compression@kubernetescrd'
+      middlewares:
+        - 'traefik-secure-headers@kubernetescrd'
+        - 'traefik-compression@kubernetescrd'
 
       # https://doc.traefik.io/traefik/v3.7/migrate/v3/#encoded-characters-configuration-default-values
       encodedCharacters:
@@ -62,7 +62,7 @@ ports:
 tlsOptions:
   default:
     minVersion: VersionTLS13
-    sniStrict: true
+    sniStrict: false
 
 tlsStore:
   spec:
