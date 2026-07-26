@@ -54,9 +54,10 @@ tlsOptions:
     sniStrict: true
 
 tlsStore:
-  certificates:
-    - secretName: wildcard-nentwich-dev-tls
-    - secretName: wildcard-civtale-de-tls
+  spec:
+    certificates:
+      - secretName: wildcard-nentwich-dev-tls
+      - secretName: wildcard-civtale-de-tls
 
 metrics:
   prometheus:
