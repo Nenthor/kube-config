@@ -62,10 +62,10 @@ ports:
 tlsOptions:
   default:
     minVersion: VersionTLS13
-    sniStrict: false
+    sniStrict: true
 
 tlsStore:
-  spec:
+  default:
     certificates:
       - secretName: wildcard-nentwich-dev-tls
       - secretName: wildcard-civtale-de-tls
