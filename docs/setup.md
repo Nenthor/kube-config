@@ -92,6 +92,15 @@ kubeseal -o=yaml < secret.yaml > sealed-secret.yaml
 On first installation `argocd-secret` will probably fail. Use this to solve it:
 `kubectl annotate secret argocd-secret -n argocd sealedsecrets.bitnami.com/managed="true" --overwrite`
 
+**Crontab**
+
+Install with `apt install cron -y`.
+
+```
+55 4 * * * sudo journalctl --vacuum-time=3d
+ 0 5 * * * sudo sudo k3s crictl --timeout 60s rmi --prune && sudo k3s crictl rm $(sudo k3s crictl ps -a -q --state Exited)
+```
+
 ## Verify setup
 
 Go to ArgoCD UI and everything should be Synced and Healthy.
