@@ -49,7 +49,7 @@ ports:
       # https://doc.traefik.io/traefik/reference/install-configuration/entrypoints/#httpmiddlewares
       middlewares:
         - 'traefik-security-headers@kubernetescrd'
-        - 'traefik-compress@kubernetescrd'
+        - 'traefik-compression@kubernetescrd'
 
 # Set default certificate to *.nentwich.dev
 tlsStore:
