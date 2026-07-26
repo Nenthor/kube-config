@@ -7,6 +7,7 @@ ingressClass:
 providers:
   kubernetesCRD:
     enabled: true
+    allowCrossNamespace: true
     allowExternalNameServices: true
 
 service:
