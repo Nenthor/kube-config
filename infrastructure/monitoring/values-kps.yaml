@@ -19,6 +19,17 @@ grafana:
   serviceMonitor:
     selfMonitor: false
 
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      traefik.ingress.kubernetes.io/router.tls: 'true'
+    hosts:
+      - monitoring.home.nentwich.dev
+    tls:
+      - hosts:
+          - monitoring.home.nentwich.dev
+
   defaultDashboardsEnabled: false
   resources:
     requests:
