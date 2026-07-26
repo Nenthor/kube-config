@@ -16,22 +16,3 @@ spec:
           port: 80
 
   tls: {}
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: pelican-panel-nentwich-dev-route
-  namespace: pelican
-  annotations:
-    argocd.argoproj.io/sync-wave: '2'
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - kind: Rule
-      match: Host(`gamepanel.nentwich.dev`)
-      services:
-        - name: pelican-panel-service
-          port: 80
-
-  tls: {}
