@@ -53,11 +53,10 @@ tlsOptions:
     minVersion: VersionTLS13
     sniStrict: true
 
-# Set default certificate to *.nentwich.dev
 tlsStore:
-  default:
-    defaultCertificate:
-      secretName: wildcard-nentwich-dev-tls
+  certificates:
+    - secretName: wildcard-nentwich-dev-tls
+    - secretName: wildcard-civtale-de-tls
 
 metrics:
   prometheus:
