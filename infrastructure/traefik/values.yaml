@@ -41,7 +41,7 @@ ports:
         options: traefik-secure-tls@kubernetescrd
 
       middlewares:
-        - 'traefik-security-headers@kubernetescrd'
+        - 'traefik-secure-headers@kubernetescrd'
         - 'traefik-compression@kubernetescrd'
 
     http3:
