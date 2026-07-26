@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-civtale-de
+  namespace: traefik
+spec:
+  secretName: wildcard-civtale-de-tls
+  issuerRef:
+    name: letsencrypt-production # Options: letsencrypt-production or letsencrypt-staging
+    kind: ClusterIssuer
+  dnsNames:
+    - 'civtale.de'
+    - '*.civtale.de'

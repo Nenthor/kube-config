@@ -40,16 +40,18 @@ ports:
         enabled: true
         options: traefik-secure-tls@kubernetescrd
 
+      middlewares:
+        - 'traefik-security-headers@kubernetescrd'
+        - 'traefik-compression@kubernetescrd'
+
     http3:
       enabled: true
       advertisedPort: 443
 
-      # Attach middlewares directly to the entrypoint
-      # Format: <namespace>-<middlewareName>@kubernetescrd
-      # https://doc.traefik.io/traefik/reference/install-configuration/entrypoints/#httpmiddlewares
-      middlewares:
-        - 'traefik-security-headers@kubernetescrd'
-        - 'traefik-compression@kubernetescrd'
+tlsOptions:
+  default:
+    minVersion: VersionTLS13
+    sniStrict: true
 
 # Set default certificate to *.nentwich.dev
 tlsStore:
@@ -71,7 +73,7 @@ extraObjects:
       name: secure-tls
       namespace: traefik
     spec:
-      minVersion: VersionTLS12 # minimum TLS 1.2
+      minVersion: VersionTLS13 # minimum TLS 1.2
       # WARNING: sniStrict=true rejects clients not sending SNI.
       sniStrict: true
 
