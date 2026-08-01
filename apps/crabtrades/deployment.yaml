@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crabtrades-app
+  namespace: crabtrades
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crabtrades-app
+  template:
+    metadata:
+      labels:
+        app: crabtrades-app
+    spec:
+      containers:
+        - name: crabtrades-container
+          image: git.nentwich.dev/nentwich/crabtrades:1.0.0
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PORT
+              value: '8000'
+          resources:
+            requests:
+              cpu: 10m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 512Mi

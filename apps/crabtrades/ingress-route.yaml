@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: crabtrades-route
+  namespace: crabtrades
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`crabtrades.nentwich.dev`)
+      services:
+        - name: crabtrades-service
+          port: 80
+
+  tls: {}
