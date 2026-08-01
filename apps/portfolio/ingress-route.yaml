@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: portfolio-route
+  namespace: portfolio
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`portfolio.nentwich.dev`)
+      services:
+        - name: portfolio-service
+          port: 80
+
+  tls: {}
