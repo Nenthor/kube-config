@@ -35,6 +35,8 @@ ingress:
         - path: /
           pathType: Prefix
           port: http
+          middlewares:
+            - name: csp-header
   tls: []
 
 persistence:
