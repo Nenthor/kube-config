@@ -29,14 +29,13 @@ ingress:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: 'true'
+    traefik.ingress.kubernetes.io/router.middlewares: forgejo-csp-header@kubernetescrd
   hosts:
     - host: git.nentwich.dev
       paths:
         - path: /
           pathType: Prefix
           port: http
-          middlewares:
-            - name: csp-header
   tls: []
 
 persistence:
