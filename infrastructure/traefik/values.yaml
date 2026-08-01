@@ -103,7 +103,7 @@ extraObjects:
         contentTypeNosniff: true
         browserXssFilter: true
         referrerPolicy: strict-origin-when-cross-origin
-        contentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;"
+        contentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; connect-src 'self' https: wss:; upgrade-insecure-requests;"
         customResponseHeaders:
           X-Robots-Tag: 'none,noarchive,nosnippet,notranslate,noimageindex'
 
