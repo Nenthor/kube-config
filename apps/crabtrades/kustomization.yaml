@@ -4,6 +4,7 @@ resources:
   - deployment.yaml
   - ingress-route.yaml
   - service.yaml
+  - credentials.yaml
 images:
   - name: git.nentwich.dev/nentwich/crabtrades
     newTag: 1.0.0
