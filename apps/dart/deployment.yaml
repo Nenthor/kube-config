@@ -23,9 +23,6 @@ spec:
           env:
             - name: PORT
               value: '80'
-          envFrom:
-            - secretRef:
-                name: dart-credentials
           resources:
             requests:
               cpu: 10m
