@@ -19,10 +19,10 @@ spec:
         - name: crabtrades-container
           image: git.nentwich.dev/nentwich/crabtrades:1.0.0
           ports:
-            - containerPort: 8000
+            - containerPort: 80
           env:
             - name: PORT
-              value: '8000'
+              value: '80'
           envFrom:
             - secretRef:
                 name: crabtrades-credentials
