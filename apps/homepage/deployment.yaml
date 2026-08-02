@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homepage-app
+  namespace: homepage
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: homepage-app
+  template:
+    metadata:
+      labels:
+        app: homepage-app
+    spec:
+      containers:
+        - name: homepage-container
+          image: git.nentwich.dev/nentwich/homepage:1.0.0
+          ports:
+            - containerPort: 80
+          env:
+            - name: PORT
+              value: '80'
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 300m
+              memory: 1Gi
