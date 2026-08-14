@@ -1,0 +1,17 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: crowdsec-bouncer-key
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: '-1'
+spec:
+  encryptedData:
+    API_KEY: AgCdGfcX/GCrZVEm7dj6kCnHR/iBQNM90PlrCD+pFJYFdgYKnISAy296IUe/86eyK37Q1yZCNYed8gp/sqz5UFN/ksNBMqtW4FaQkANEoGQ4jBcH/ZjwnhRgBBPR5+cnMSty9uJxgvb1XfTQnMlCUuPOVOg+Sb1PWgknVuyG8Vl7Pfez0kJNieAN8llgu55LcefmrOoOC/9b0oAMHnJl4z48VHvQoyoqF6Oc0X8tZGuHuIsIl3WNNQYV4Ujph4tXXvFOdvHrN6EsIiWh5dLNGriabfo8Kp8AE+S3uLv867MYI3hUiQC53n3M9JBp6aCl914pHmoU+zeGL2s5I7WOhhlICJ3m5Ss6eiDs1EOyQcWMFJsNBkvfmFXgAbEW3nt4F89MnHEj1GhaA8pArlxvzEj0PJsdLbUUzVgKyMUYtnLfqQMyhfnWNZNf3WMAS/xr6mOcZEnXkuOzeDD7z75yGiWJD+DkCncv9y8PKXXykkZqG2p1mUWs0IdNJUD2J9MwRWI6T+7JqPRxIkll3Oe8cjotmmK1xmfCCVoTbJAqkQD9aWyyN1Tt71X+bZ150F+pCmj9B3vxIuppqIEja6hLqe2kjQLT0ZlIWIb2DfXMiPk0sMqelmRDlKIC+iLCmyEF6Dg1NPnUjjYvaeHxmafOj4Ht7Pb7zx1nPMc77IOBdoiunlm09F4sEXrxzLWauXGvIw/ya0uNDt/hgrk7GVL2gSNuyqBaENPzmFWqsSM/plqDi1ncMb0kMBArZC0B
+  template:
+    metadata:
+      name: crowdsec-bouncer-key
+      namespace: traefik
+      annotations:
+        argocd.argoproj.io/sync-wave: '2'
+    type: Opaque

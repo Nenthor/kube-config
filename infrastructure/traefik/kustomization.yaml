@@ -14,3 +14,4 @@ resources:
   - wildcard-nentwich-dev-cert.yaml
   - wildcard-civtale-de-cert.yaml
   - immich-ingress-routes.yaml
+  - crowdsec-bouncer-key.yaml
