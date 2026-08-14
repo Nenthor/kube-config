@@ -27,6 +27,12 @@ kubectl rollout restart deployment <SERVICE> -n <NAMESPACE>
 kubectl port-forward -n cnpg-database svc/postgres-rw 5432:5432
 ```
 
+**Port forward Prometheus to your local machine:**
+
+```
+kubectl port-forward -n monitoring svc/prometheus-operated 9090:9090
+```
+
 **Get latest version of a helm chart:**
 
 ```
