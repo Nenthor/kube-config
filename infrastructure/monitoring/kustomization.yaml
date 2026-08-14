@@ -12,3 +12,4 @@ helmCharts:
 
 resources:
   - grafana-admin-credentials.yaml
+  - service-monitor.yaml
