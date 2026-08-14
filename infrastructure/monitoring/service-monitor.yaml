@@ -11,3 +11,7 @@ spec:
     - port: metrics
       interval: 30s
       path: /metrics
+      metricRelabelings:
+        - sourceLabels: [entrypoint]
+          regex: 'traefik|metrics'
+          action: drop
