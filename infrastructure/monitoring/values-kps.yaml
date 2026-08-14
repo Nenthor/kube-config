@@ -126,10 +126,8 @@ kubeProxy:
   enabled: false
 nodeExporter:
   enabled: false
-prometheusOperator:
-  enabled: false
-kube-state-metrics:
-  enabled: false
 
+prometheusOperator:
+  enabled: true
 kubelet:
   enabled: true # Container CPU/RAM and PVC disk metrics
