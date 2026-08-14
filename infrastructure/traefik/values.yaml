@@ -83,9 +83,12 @@ tlsStore:
 
 metrics:
   prometheus:
-    addEntryPointsLabels: true # https or http
-    addRoutersLabels: true # host & path
-    addServicesLabels: true # backend
+    enabled: true
+    addRoutersLabels: true
+    addServicesLabels: true
+    addEntryPointsLabels: true
+    service:
+      enabled: true
 
 extraObjects:
   # CrowdSec Bouncer

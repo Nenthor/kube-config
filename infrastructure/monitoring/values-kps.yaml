@@ -54,14 +54,6 @@ grafana:
       env:
         HEALTH_PORT: '8082'
 
-  additionalDataSources:
-    - name: Loki
-      type: loki
-      access: proxy
-      url: http://loki.monitoring.svc.cluster.local:3100
-      jsonData:
-        maxLines: 1000
-
 alertmanager:
   enabled: true
 
@@ -94,14 +86,12 @@ prometheus:
 
   prometheusSpec:
     replicas: 1
-    retention: 7d
-    retentionSize: 8GiB
+    retention: 365d
+    retentionSize: 16GiB
     scrapeInterval: 30s
 
-    additionalMetricRelabelings:
-      - sourceLabels: [__name__]
-        action: keep
-        regex: '^(container_cpu_usage_seconds_total|container_memory_working_set_bytes|kubelet_volume_stats_available_bytes)$'
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorNamespaceSelector: {}
 
     resources:
       requests:
@@ -143,12 +133,3 @@ kube-state-metrics:
 
 kubelet:
   enabled: true # Container CPU/RAM and PVC disk metrics
-  serviceMonitor:
-    metricRelabelings:
-      - sourceLabels: [__name__]
-        action: keep
-        regex: '^(container_cpu_usage_seconds_total|container_memory_working_set_bytes|kubelet_volume_stats_available_bytes)$'
-    cAdvisorMetricRelabelings:
-      - sourceLabels: [__name__]
-        action: keep
-        regex: '^(container_cpu_usage_seconds_total|container_memory_working_set_bytes|kubelet_volume_stats_available_bytes)$'
