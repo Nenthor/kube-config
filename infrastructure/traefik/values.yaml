@@ -99,7 +99,7 @@ extraObjects:
         crowdsec-bouncer:
           enabled: true
           crowdsecMode: stream # 'stream' (low latency cached) or 'live'
-          crowdsecLapiUrl: '10.77.20.1:8080'
+          crowdsecLapiHost: '10.77.20.1:8080'
           crowdsecLapiKeyFile: '/etc/traefik/crowdsec/API_KEY'
 
           # (Optional) Uncomment if using CrowdSec AppSec (WAF payload inspection)
