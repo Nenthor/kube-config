@@ -2,6 +2,14 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "timezone": "Europe/Berlin",
+  "platformAutomerge": false,
+  "hostRules": [
+    {
+      "matchHost": "docker.io",
+      "username": "{{ secrets.DOCKERHUB_USERNAME }}",
+      "password": "{{ secrets.DOCKERHUB_TOKEN }}"
+    }
+  ],
   "packageRules": [
     {
       "description": "Automerge minor and patch updates for stable releases (>= 1.0.0)",
@@ -25,6 +33,5 @@
       "ignoreTests": true,
       "automerge": false
     }
-  ],
-  "platformAutomerge": false
+  ]
 }
