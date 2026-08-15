@@ -1,3 +1,12 @@
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: external-insecure-transport
+  namespace: traefik
+spec:
+  insecureSkipVerify: true
+
+---
 # Immich
 apiVersion: v1
 kind: Service
@@ -30,9 +39,8 @@ spec:
           passHostHeader: false
   tls: {}
 
-
-# Syncthing
 ---
+# Syncthing
 apiVersion: v1
 kind: Service
 metadata:
@@ -42,7 +50,7 @@ spec:
   type: ExternalName
   externalName: syncthing.nentwich.backend
   ports:
-    - name: http
+    - name: https
       port: 8384
 ---
 apiVersion: traefik.io/v1alpha1
@@ -61,5 +69,7 @@ spec:
       services:
         - name: syncthing-external-service
           port: 8384
+          scheme: https
+          serversTransport: external-insecure-transport
           passHostHeader: false
   tls: {}
