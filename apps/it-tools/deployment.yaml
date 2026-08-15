@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: it-tools-app
+  namespace: it-tools
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: it-tools-app
+  template:
+    metadata:
+      labels:
+        app: it-tools-app
+    spec:
+      containers:
+        - name: it-tools-container
+          image: corentinth/it-tools:2024.10.22-7ca5933
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 512Mi
