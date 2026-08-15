@@ -1,0 +1,65 @@
+# Immich
+apiVersion: v1
+kind: Service
+metadata:
+  name: immich-external-service
+  namespace: traefik
+spec:
+  type: ExternalName
+  externalName: immich.nentwich.backend
+  ports:
+    - name: http
+      port: 2283
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: immich-ingress-route
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`immich.home.nentwich.dev`)
+      services:
+        - name: immich-external-service
+          port: 2283
+          passHostHeader: false
+  tls: {}
+
+
+# Syncthing
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: syncthing-external-service
+  namespace: traefik
+spec:
+  type: ExternalName
+  externalName: syncthing.nentwich.backend
+  ports:
+    - name: http
+      port: 8384
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: syncthing-ingress-route
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`syncthing.home.nentwich.dev`)
+      services:
+        - name: syncthing-external-service
+          port: 8384
+          passHostHeader: false
+  tls: {}
