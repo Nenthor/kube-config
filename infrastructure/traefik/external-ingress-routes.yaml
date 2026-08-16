@@ -73,3 +73,36 @@ spec:
           serversTransport: external-insecure-transport
           passHostHeader: false
   tls: {}
+
+---
+# Jellyfin
+apiVersion: v1
+kind: Service
+metadata:
+  name: jellyfin-external-service
+  namespace: traefik
+spec:
+  type: ExternalName
+  externalName: jellyfin.nentwich.backend
+  ports:
+    - name: http
+      port: 8096
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jellyfin-ingress-route
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`media.home.nentwich.dev`)
+      services:
+        - name: jellyfin-external-service
+          port: 8096
+          passHostHeader: false
+  tls: {}
