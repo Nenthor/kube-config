@@ -7,7 +7,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '2'
 spec:
   entryPoints:
-    - websecure
+    - websecure-hytale
   routes:
     - kind: Rule
       match: Host(`gamepanel.civtale.de`)

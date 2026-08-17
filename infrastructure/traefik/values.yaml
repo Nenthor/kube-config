@@ -76,7 +76,7 @@ ports:
     http3: *securedHttp3
 
   # *.civtale.de -> 10.77.20.202 HTTPS
-  websecure-civtale:
+  websecure-hytale:
     port: 8445
     exposedPort: 443
     protocol: TCP

@@ -7,10 +7,10 @@ metadata:
     argocd.argoproj.io/sync-wave: '2'
 spec:
   entryPoints:
-    - websecure
+    - websecure-home
   routes:
     - kind: Rule
-      match: Host(`family.nentwich.dev`)
+      match: Host(`family.home.nentwich.dev`)
       services:
         - name: homepage-service
           port: 80
