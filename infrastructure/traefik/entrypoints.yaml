@@ -1,0 +1,85 @@
+# nentwich.dev *.nentwich.dev -> 10.77.20.200
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-nentwich
+  namespace: traefik
+  annotations:
+    metallb.io/loadBalancerIPs: '10.77.20.200'
+    argocd.argoproj.io/sync-wave: '-1'
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: traefik-traefik
+  ports:
+    - name: web
+      port: 80
+      targetPort: 8000
+      protocol: TCP
+    - name: websecure
+      port: 443
+      targetPort: 8040
+      protocol: TCP
+    - name: websecure-udp
+      port: 443
+      targetPort: 8040
+      protocol: UDP
+
+---
+# *.home.nentwich.dev -> 10.77.20.201
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-home
+  namespace: traefik
+  annotations:
+    metallb.io/loadBalancerIPs: '10.77.20.201'
+    argocd.argoproj.io/sync-wave: '-1'
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: traefik-traefik
+  ports:
+    - name: web
+      port: 80
+      targetPort: 8001
+      protocol: TCP
+    - name: websecure
+      port: 443
+      targetPort: 8041
+      protocol: TCP
+    - name: websecure-udp
+      port: 443
+      targetPort: 8041
+      protocol: UDP
+
+---
+# civtale.de *.civtale.de -> 10.77.20.202
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-civtale
+  namespace: traefik
+  annotations:
+    metallb.io/loadBalancerIPs: '10.77.20.202'
+    argocd.argoproj.io/sync-wave: '-1'
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: traefik-traefik
+  ports:
+    - name: web
+      port: 80
+      targetPort: 8002
+      protocol: TCP
+    - name: websecure
+      port: 443
+      targetPort: 8042
+      protocol: TCP
+    - name: websecure-udp
+      port: 443
+      targetPort: 8042
+      protocol: UDP

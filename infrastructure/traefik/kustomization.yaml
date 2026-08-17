@@ -12,6 +12,9 @@ helmCharts:
 
 resources:
   - wildcard-nentwich-dev-cert.yaml
+  - wildcard-home-nentwich-dev-cert.yaml
   - wildcard-civtale-de-cert.yaml
+  - entrypoints.yaml
+  - middleware.yaml
   - external-ingress-routes.yaml
   - crowdsec-bouncer-key.yaml

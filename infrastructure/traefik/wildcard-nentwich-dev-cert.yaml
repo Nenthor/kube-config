@@ -11,4 +11,3 @@ spec:
   dnsNames:
     - 'nentwich.dev'
     - '*.nentwich.dev'
-    - '*.home.nentwich.dev'

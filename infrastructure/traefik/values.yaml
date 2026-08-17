@@ -38,24 +38,24 @@ ports:
     http:
       redirections:
         entryPoint:
-          to: websecure
+          to: websecure-nentwich
           scheme: https
           permanent: true
 
-  # HTTPS Entrypoint
-  websecure:
-    port: 8443
+  # *.nentwich.dev -> 10.77.20.200 HTTPS
+  websecure-nentwich:
+    port: 8040
     exposedPort: 443
     protocol: TCP
-    http:
+    expose:
+      default: false
+    http: &securedHttp
       tls:
         enabled: true
-
       middlewares:
         - 'traefik-crowdsec-bouncer@kubernetescrd'
         - 'traefik-secure-headers@kubernetescrd'
         - 'traefik-compression@kubernetescrd'
-
       # https://doc.traefik.io/traefik/v3.7/migrate/v3/#encoded-characters-configuration-default-values
       encodedCharacters:
         allowEncodedSlash: false
@@ -65,10 +65,29 @@ ports:
         allowEncodedPercent: false
         allowEncodedQuestionMark: false
         allowEncodedHash: false
-
-    http3:
+    http3: &securedHttp3
       enabled: true
       advertisedPort: 443
+
+  # *.home.nentwich.dev -> 10.77.20.201 HTTPS
+  websecure-home:
+    port: 8041
+    exposedPort: 443
+    protocol: TCP
+    expose:
+      default: false
+    http: *securedHttp
+    http3: *securedHttp3
+
+  # *.civtale.de -> 10.77.20.202 HTTPS
+  websecure-civtale:
+    port: 8445
+    exposedPort: 443
+    protocol: TCP
+    expose:
+      default: false
+    http: *securedHttp
+    http3: *securedHttp3
 
 tlsOptions:
   default:
@@ -79,6 +98,7 @@ tlsStore:
   default:
     certificates:
       - secretName: wildcard-nentwich-dev-tls
+      - secretName: wildcard-home-nentwich-dev-tls
       - secretName: wildcard-civtale-de-tls
 
 metrics:
@@ -92,54 +112,3 @@ metrics:
     serviceMonitor:
       enabled: true
       honorLabels: true
-
-extraObjects:
-  # CrowdSec Bouncer
-  - apiVersion: traefik.io/v1alpha1
-    kind: Middleware
-    metadata:
-      name: crowdsec-bouncer
-      namespace: traefik
-    spec:
-      plugin:
-        crowdsec-bouncer:
-          enabled: true
-          crowdsecMode: stream # 'stream' (low latency cached) or 'live'
-          crowdsecLapiHost: '10.77.20.1:8080'
-          crowdsecLapiKeyFile: '/etc/traefik/crowdsec/API_KEY'
-
-          # (Optional) Uncomment if using CrowdSec AppSec (WAF payload inspection)
-          # crowdsecAppsecEnabled: true
-          # crowdsecAppsecHost: "crowdsec-service.crowdsec.svc.cluster.local:7422"
-
-          forwardedHeadersTrustedIPs:
-            - '10.0.0.0/8'
-            - '172.16.0.0/12'
-            - '192.168.0.0/16'
-
-  # Secure Headers
-  - apiVersion: traefik.io/v1alpha1
-    kind: Middleware
-    metadata:
-      name: secure-headers
-      namespace: traefik
-    spec:
-      headers:
-        stsSeconds: 31536000
-        stsIncludeSubdomains: true
-        stsPreload: true
-        frameDeny: true
-        contentTypeNosniff: true
-        browserXssFilter: true
-        referrerPolicy: strict-origin-when-cross-origin
-        customResponseHeaders:
-          X-Robots-Tag: 'none,noarchive,nosnippet,notranslate,noimageindex'
-
-  # Compression
-  - apiVersion: traefik.io/v1alpha1
-    kind: Middleware
-    metadata:
-      name: compression
-      namespace: traefik
-    spec:
-      compress: {}

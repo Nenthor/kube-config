@@ -1,0 +1,57 @@
+# Secure Headers
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: secure-headers
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: '-1'
+spec:
+  headers:
+    stsSeconds: 31536000
+    stsIncludeSubdomains: true
+    stsPreload: true
+    frameDeny: true
+    contentTypeNosniff: true
+    browserXssFilter: true
+    referrerPolicy: strict-origin-when-cross-origin
+    customResponseHeaders:
+      X-Robots-Tag: 'none,noarchive,nosnippet,notranslate,noimageindex'
+
+---
+# Compression
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: compression
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: '-1'
+spec:
+  compress: {}
+
+---
+# CrowdSec
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: crowdsec-bouncer
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: '-1'
+spec:
+  plugin:
+    crowdsec-bouncer:
+      enabled: true
+      crowdsecMode: stream # 'stream' (low latency cached) or 'live'
+      crowdsecLapiHost: '10.77.20.1:8080'
+      crowdsecLapiKeyFile: '/etc/traefik/crowdsec/API_KEY'
+
+      # (Optional) Uncomment if using CrowdSec AppSec (WAF payload inspection)
+      # crowdsecAppsecEnabled: true
+      # crowdsecAppsecHost: "crowdsec-service.crowdsec.svc.cluster.local:7422"
+
+      forwardedHeadersTrustedIPs:
+        - '10.0.0.0/8'
+        - '172.16.0.0/12'
+        - '192.168.0.0/16'
