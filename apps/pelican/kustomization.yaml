@@ -10,5 +10,5 @@ resources:
 images:
   - name: redis
     newTag: 8.10.0-alpine
-  - name: ghcr.io/pelican-dev/panel
-    newTag: 1.0.0-beta35
+  - name: ghcr.io/pelican/panel
+    newTag: 1.0.0-beta38
