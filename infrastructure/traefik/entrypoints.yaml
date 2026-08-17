@@ -6,7 +6,8 @@ metadata:
   namespace: traefik
   annotations:
     metallb.io/loadBalancerIPs: '10.77.20.200'
-    argocd.argoproj.io/sync-wave: '-1'
+    metallb.io/allow-shared-ip: 'shared-traefik-forgejo-ip'
+
 spec:
   type: LoadBalancer
   selector:
