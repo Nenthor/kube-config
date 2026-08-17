@@ -24,6 +24,7 @@ grafana:
     ingressClassName: traefik
     annotations:
       traefik.ingress.kubernetes.io/router.tls: 'true'
+      traefik.ingress.kubernetes.io/router.entrypoints: ws-home
     hosts:
       - monitoring.home.nentwich.dev
     tls:
