@@ -11,11 +11,7 @@ providers:
     allowExternalNameServices: true
 
 service:
-  enabled: true
-  single: true
-  annotations:
-    metallb.io/loadBalancerIPs: '10.77.20.200'
-    metallb.io/allow-shared-ip: 'shared-traefik-forgejo-ip'
+  enabled: false
 
 experimental:
   plugins:
