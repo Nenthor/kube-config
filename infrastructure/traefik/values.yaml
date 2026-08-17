@@ -34,12 +34,12 @@ ports:
     http:
       redirections:
         entryPoint:
-          to: websecure-nentwich
+          to: ws-nentwich
           scheme: https
           permanent: true
 
   # *.nentwich.dev -> 10.77.20.200 HTTPS
-  websecure-nentwich:
+  ws-nentwich:
     port: 8040
     exposedPort: 443
     protocol: TCP
@@ -66,7 +66,7 @@ ports:
       advertisedPort: 443
 
   # *.home.nentwich.dev -> 10.77.20.201 HTTPS
-  websecure-home:
+  ws-home:
     port: 8041
     exposedPort: 443
     protocol: TCP
@@ -76,7 +76,7 @@ ports:
     http3: *securedHttp3
 
   # *.civtale.de -> 10.77.20.202 HTTPS
-  websecure-hytale:
+  ws-hytale:
     port: 8042
     exposedPort: 443
     protocol: TCP

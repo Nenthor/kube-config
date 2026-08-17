@@ -29,7 +29,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '2'
 spec:
   entryPoints:
-    - websecure-home
+    - ws-home
   routes:
     - kind: Rule
       match: Host(`immich.home.nentwich.dev`)
@@ -62,7 +62,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '2'
 spec:
   entryPoints:
-    - websecure-home
+    - ws-home
   routes:
     - kind: Rule
       match: Host(`syncthing.home.nentwich.dev`)
@@ -97,7 +97,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '2'
 spec:
   entryPoints:
-    - websecure-home
+    - ws-home
   routes:
     - kind: Rule
       match: Host(`media.home.nentwich.dev`)

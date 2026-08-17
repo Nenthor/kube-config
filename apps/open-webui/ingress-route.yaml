@@ -7,11 +7,10 @@ metadata:
     argocd.argoproj.io/sync-wave: '1'
 spec:
   entryPoints:
-    - websecure-nentwich
+    - ws-nentwich
   routes:
     - kind: Rule
       match: Host(`chat.home.nentwich.dev`)
-      priority: 10
       services:
         - name: open-webui
           port: 80

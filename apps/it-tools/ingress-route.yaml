@@ -7,7 +7,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '2'
 spec:
   entryPoints:
-    - websecure-nentwich
+    - ws-nentwich
   routes:
     - kind: Rule
       match: Host(`it-tools.nentwich.dev`)

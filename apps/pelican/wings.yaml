@@ -17,7 +17,7 @@ metadata:
   namespace: pelican
 spec:
   entryPoints:
-    - websecure
+    - ws-hytale
   routes:
     - match: Host(`gamepanel-wings.civtale.de`)
       kind: Rule
