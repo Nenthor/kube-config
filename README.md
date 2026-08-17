@@ -21,6 +21,12 @@ kubeseal -o yaml < secret.yaml > sealed-secret.yaml
 kubectl rollout restart deployment <SERVICE> -n <NAMESPACE>
 ```
 
+**Port forward ArgoCD to your local machine:**
+
+```
+kubectl port-forward svc/argocd-server -n argocd 8080:80
+```
+
 **Port forward the database to your local machine:**
 
 ```
