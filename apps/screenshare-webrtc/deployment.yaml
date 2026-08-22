@@ -15,9 +15,16 @@ spec:
       labels:
         app: screenshare-webrtc-app
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: screenshare-webrtc-container
           image: git.nentwich.dev/nentwich/screenshare-webrtc:0.0.2
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ['ALL']
           ports:
             - containerPort: 8000
           env:

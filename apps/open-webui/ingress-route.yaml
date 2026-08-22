@@ -7,7 +7,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '1'
 spec:
   entryPoints:
-    - ws-nentwich
+    - ws-home
   routes:
     - kind: Rule
       match: Host(`chat.home.nentwich.dev`)

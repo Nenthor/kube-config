@@ -17,9 +17,17 @@ spec:
       labels:
         app: vaultwarden-app
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: vaultwarden-container
           image: vaultwarden/server:1.36.0-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ['ALL']
+              add: ['NET_BIND_SERVICE']
           ports:
             - containerPort: 80
           env:

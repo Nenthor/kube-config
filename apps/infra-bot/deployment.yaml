@@ -15,11 +15,18 @@ spec:
       labels:
         app: infra-bot-app
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       imagePullSecrets:
         - name: git-registry-secret
       containers:
         - name: infra-bot-container
           image: git.nentwich.dev/nentwich/infra-bot:1.0.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ['ALL']
           envFrom:
             - secretRef:
                 name: infra-bot-secrets

@@ -57,6 +57,9 @@ gitea:
     server:
       ROOT_URL: 'https://git.nentwich.dev'
 
+    service:
+      DISABLE_REGISTRATION: 'true'
+
     actions:
       ENABLED: 'true'
 

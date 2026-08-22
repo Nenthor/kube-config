@@ -111,6 +111,8 @@ prometheus:
               storage: 10Gi
 
 # Disable unnecessary monitors
+kubernetesServiceMonitors: # Disable all globally
+  enabled: false
 kubeApiServer:
   enabled: false
 kubeControllerManager:
@@ -127,8 +129,19 @@ kubeProxy:
   enabled: false
 nodeExporter:
   enabled: false
+kubeStateMetrics:
+  enabled: false
 
 prometheusOperator:
   enabled: true
 kubelet:
   enabled: true # Container CPU/RAM and PVC disk metrics
+  serviceMonitor:
+    cAdvisorMetricRelabelings:
+      - sourceLabels: [__name__]
+        regex: 'container_cpu_usage_seconds_total|container_memory_working_set_bytes'
+        action: keep
+    metricRelabelings:
+      - sourceLabels: [__name__]
+        regex: 'kubelet_volume_stats_available_bytes'
+        action: keep
