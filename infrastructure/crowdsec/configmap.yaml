@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-appsec-config
+  namespace: crowdsec
+  annotations:
+    argocd.argoproj.io/sync-wave: '-1'
+data:
+  acquis.yaml: |
+    source: appsec
+    listen_addr: 0.0.0.0:7422
+    path: /
+    appsec_config: nentwich/traefik-appsec
+    labels:
+      type: appsec
+
+  traefik-appsec.yaml: |
+    name: nentwich/traefik-appsec
+    default_remediation: ban
+    inband_rules:
+      - crowdsecurity/base-config
+      - crowdsecurity/vpatch-*
+    pre_eval:
+      - filter: IsInBand == true && req.Host == ""
+        apply:
+          - DropRequest("missing hostname")

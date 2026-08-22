@@ -43,13 +43,12 @@ spec:
   plugin:
     crowdsec-bouncer:
       enabled: true
-      crowdsecMode: stream # 'stream' (low latency cached) or 'live'
+      crowdsecMode: appsec
       crowdsecLapiHost: '10.77.20.1:8080'
       crowdsecLapiKeyFile: '/etc/traefik/crowdsec/API_KEY'
-
-      # (Optional) Uncomment if using CrowdSec AppSec (WAF payload inspection)
-      # crowdsecAppsecEnabled: true
-      # crowdsecAppsecHost: "crowdsec-service.crowdsec.svc.cluster.local:7422"
-
-      forwardedHeadersTrustedIPs:
-        - '10.77.20.0/24'
+      crowdsecAppsecEnabled: true
+      crowdsecAppsecHost: 'crowdsec-appsec.crowdsec.svc.cluster.local:7422'
+      crowdsecAppsecFailureBlock: true
+      crowdsecAppsecUnreachableBlock: false
+      # forwardedHeadersTrustedIPs:
+      #   - '10.77.20.0/24'

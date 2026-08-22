@@ -49,7 +49,7 @@ ports:
       tls:
         enabled: true
       middlewares:
-        - 'traefik-crowdsec-bouncer@kubernetescrd'
+        # - 'traefik-crowdsec-bouncer@kubernetescrd'
         - 'traefik-secure-headers@kubernetescrd'
         - 'traefik-compression@kubernetescrd'
       # https://doc.traefik.io/traefik/v3.7/migrate/v3/#encoded-characters-configuration-default-values

@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crowdsec-appsec
+  namespace: crowdsec
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crowdsec-appsec
+  template:
+    metadata:
+      labels:
+        app: crowdsec-appsec
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: crowdsec-container
+          image: crowdsecurity/crowdsec:v1.7.8
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ['ALL']
+          ports:
+            - name: appsec
+              containerPort: 7422
+          env:
+            - name: DISABLE_LOCAL_API
+              value: 'true'
+            - name: LOCAL_API_URL
+              value: 'http://10.77.20.1:8080'
+            - name: AGENT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-agent-credentials
+                  key: AGENT_USERNAME
+            - name: AGENT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-agent-credentials
+                  key: AGENT_PASSWORD
+            - name: COLLECTIONS
+              value: 'crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules'
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - mountPath: /etc/crowdsec/acquis.yaml
+              subPath: acquis.yaml
+              name: appsec-config
+            - mountPath: /etc/crowdsec/appsec-configs/nentwich/traefik-appsec.yaml
+              subPath: traefik-appsec.yaml
+              name: appsec-config
+            - mountPath: /var/lib/crowdsec/data
+              name: crowdsec-data
+      volumes:
+        - name: appsec-config
+          configMap:
+            name: crowdsec-appsec-config
+        - name: crowdsec-data
+          persistentVolumeClaim:
+            claimName: crowdsec-pvc

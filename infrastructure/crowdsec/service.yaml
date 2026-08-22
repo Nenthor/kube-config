@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: crowdsec-appsec
+  namespace: crowdsec
+  labels:
+    app: crowdsec-appsec
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+spec:
+  selector:
+    app: crowdsec-appsec
+  ports:
+    - name: appsec
+      protocol: TCP
+      port: 7422
+      targetPort: 7422
