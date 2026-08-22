@@ -21,3 +21,4 @@ resources:
   - runner-init-secret.yaml
   - pvc-cache.yaml
   - ingress-route-middleware.yaml
+  - runner-networkpolicy.yaml

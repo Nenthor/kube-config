@@ -1,0 +1,37 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: forgejo-runner-egress
+  namespace: forgejo
+  annotations:
+    argocd.argoproj.io/sync-wave: '-1'
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: forgejo-runner
+  policyTypes:
+    - Egress
+  egress:
+    # Allow DNS
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Allow access to forgejo server
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: forgejo
+    # Allow access to internet
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 192.168.0.0/16
+              - 172.16.0.0/16
