@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stirling-pdf-app
+  namespace: stirling-pdf
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stirling-pdf-app
+  template:
+    metadata:
+      labels:
+        app: stirling-pdf-app
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: stirling-pdf-container
+          image: stirlingtools/stirling-pdf:2.14.3-ultra-lite
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ['ALL']
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SECURITY_ENABLELOGIN
+              value: 'false'
+            - name: SYSTEM_DEFAULTLOCALE
+              value: 'de-DE'
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: '2'
+              memory: 2Gi
+          volumeMounts:
+            - mountPath: /configs
+              name: stirling-pdf-data
+      volumes:
+        - name: stirling-pdf-data
+          persistentVolumeClaim:
+            claimName: stirling-pdf-pvc
