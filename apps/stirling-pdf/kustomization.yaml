@@ -7,4 +7,4 @@ resources:
   - pvc.yaml
 images:
   - name: stirlingtools/stirling-pdf
-    newTag: 2.14.3-ultra-lite
+    newTag: 2.14.3
