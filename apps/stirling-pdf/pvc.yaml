@@ -4,7 +4,7 @@ metadata:
   name: stirling-pdf-pvc
   namespace: stirling-pdf
   annotations:
-    argocd.argoproj.io/sync-wave: '-1'
+    argocd.argoproj.io/sync-wave: '0'
 spec:
   accessModes:
     - ReadWriteOnce
