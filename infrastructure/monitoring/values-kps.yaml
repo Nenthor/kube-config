@@ -56,28 +56,28 @@ grafana:
         HEALTH_PORT: '8082'
 
 alertmanager:
-  enabled: true
+  enabled: false
 
-  serviceMonitor:
-    selfMonitor: false
+  # serviceMonitor:
+  #   selfMonitor: false
 
-  alertmanagerSpec:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 10m
-        memory: 32Mi
-      limits:
-        cpu: 50m
-        memory: 64Mi
-    storage:
-      volumeClaimTemplate:
-        spec:
-          storageClassName: local-path
-          accessModes: ['ReadWriteOnce']
-          resources:
-            requests:
-              storage: 1Gi
+  # alertmanagerSpec:
+  #   replicas: 1
+  #   resources:
+  #     requests:
+  #       cpu: 10m
+  #       memory: 32Mi
+  #     limits:
+  #       cpu: 50m
+  #       memory: 64Mi
+  #   storage:
+  #     volumeClaimTemplate:
+  #       spec:
+  #         storageClassName: local-path
+  #         accessModes: ['ReadWriteOnce']
+  #         resources:
+  #           requests:
+  #             storage: 1Gi
 
 prometheus:
   enabled: true
@@ -111,8 +111,6 @@ prometheus:
               storage: 10Gi
 
 # Disable unnecessary monitors
-kubernetesServiceMonitors: # Disable all globally
-  enabled: false
 kubeApiServer:
   enabled: false
 kubeControllerManager:
