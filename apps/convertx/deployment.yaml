@@ -46,7 +46,8 @@ spec:
               memory: 256Mi
             limits:
               cpu: '2'
-              memory: 2Gi
+              # TODO: ConvertX buffers the whole file in RAM for both upload and: https://github.com/C4illin/ConvertX/issues/364
+              memory: 3Gi
           volumeMounts:
             - mountPath: /app/data
               name: convertx-data
