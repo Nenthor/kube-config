@@ -9,6 +9,6 @@ resources:
   - wings.yaml
 images:
   - name: redis
-    newTag: 8.10.0-alpine
+    newTag: 8.10.1-alpine
   - name: ghcr.io/pelican/panel
     newTag: 1.0.0-beta38
