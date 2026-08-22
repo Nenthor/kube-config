@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: convertx-app
+  namespace: convertx
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: convertx-app
+  template:
+    metadata:
+      labels:
+        app: convertx-app
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: convertx-container
+          image: ghcr.io/c4illin/convertx:v0.18.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ['ALL']
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: '3000'
+            - name: HTTP_ALLOWED
+              value: 'true'
+            - name: ACCOUNT_REGISTRATION
+              value: 'false'
+            - name: ALLOW_UNAUTHENTICATED
+              value: 'true'
+            - name: HIDE_HISTORY
+              value: 'true'
+            - name: AUTO_DELETE_EVERY_N_HOURS
+              value: '1'
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: '2'
+              memory: 2Gi
+          volumeMounts:
+            - mountPath: /app/data
+              name: convertx-data
+      volumes:
+        - name: convertx-data
+          persistentVolumeClaim:
+            claimName: convertx-pvc
