@@ -1,4 +1,16 @@
 apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: argocd-server-transport
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '-1'
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  insecureSkipVerify: true
+
+---
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: argocd-ingress-home
@@ -16,7 +28,9 @@ spec:
       priority: 10
       services:
         - name: argocd-server
-          port: 80
+          port: 443
+          scheme: https
+          serversTransport: argocd-server-transport
 
     # 2. gRPC CLI Router (requires HTTP/2)
     - kind: Rule
@@ -24,8 +38,9 @@ spec:
       priority: 11
       services:
         - name: argocd-server
-          port: 80
-          scheme: h2c
+          port: 443
+          scheme: https
+          serversTransport: argocd-server-transport
 
   tls: {}
 
@@ -47,6 +62,8 @@ spec:
       match: Host(`argo.nentwich.dev`) && PathPrefix(`/api/webhook`)
       services:
         - name: argocd-server
-          port: 80
+          port: 443
+          scheme: https
+          serversTransport: argocd-server-transport
 
   tls: {}

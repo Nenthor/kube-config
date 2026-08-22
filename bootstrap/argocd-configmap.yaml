@@ -20,4 +20,4 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: '-3' # apply this first
 data:
-  server.insecure: 'true'
+  server.insecure: 'false'
