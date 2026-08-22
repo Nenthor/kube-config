@@ -30,3 +30,14 @@ spec:
   owner: pelican
   cluster:
     name: postgres
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: open-webui-db
+  namespace: cnpg-database
+spec:
+  name: open-webui
+  owner: open-webui
+  cluster:
+    name: postgres

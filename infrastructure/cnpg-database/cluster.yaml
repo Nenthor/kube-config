@@ -52,3 +52,11 @@ spec:
         connectionLimit: -1
         passwordSecret:
           name: pelican-db-credentials
+
+      - name: open-webui
+        ensure: present
+        login: true
+        inherit: true
+        connectionLimit: -1
+        passwordSecret:
+          name: open-webui-db-credentials

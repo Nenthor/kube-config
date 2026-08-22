@@ -15,7 +15,24 @@ persistence:
   enabled: true
   size: 16Gi
 
+resources:
+  requests:
+    cpu: 200m
+    memory: 300Mi
+  limits:
+    cpu: 1000m
+    memory: 768Mi
+
 extraEnvVars:
   # Avoids loading the local sentence-transformers embedding model into memory
   - name: RAG_EMBEDDING_ENGINE
     value: 'ollama'
+  # Avoids loading the local Whisper speech-to-text model into memory
+  - name: AUDIO_STT_ENGINE
+    value: 'webapi'
+
+  - name: DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: open-webui-db-secret
+        key: DATABASE_URL
