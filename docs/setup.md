@@ -50,6 +50,19 @@ kubectl label secret git-repo-secret -n argocd argocd.argoproj.io/secret-type=re
 kubectl apply -f root-app.yaml
 ```
 
+`install.yaml` ships dex (SSO) and the notifications controller. Neither is used here — there is
+no `dex.config`/`oidc.config` in `bootstrap/argocd-configmap.yaml` and `argocd-notifications-cm`
+has no triggers — so remove them again to save ~90Mi of RAM. Nothing reconciles these, so they
+stay gone until `install.yaml` is applied again:
+
+```
+kubectl delete deploy argocd-dex-server argocd-notifications-controller -n argocd
+kubectl delete svc argocd-dex-server argocd-notifications-controller-metrics -n argocd
+kubectl delete sa,role,rolebinding argocd-dex-server argocd-notifications-controller -n argocd
+kubectl delete cm argocd-notifications-cm -n argocd
+kubectl delete secret argocd-notifications-secret -n argocd
+```
+
 ## Logging into ArgoCD UI
 
 **Get initial admin password:**
@@ -110,3 +123,52 @@ Sometimes the argocd server needs to be restarted to server under port 80 for in
 ```
 kubectl rollout restart deployment argocd-server -n argocd
 ```
+
+## Updating ArgoCD
+
+ArgoCD installs itself from upstream `install.yaml`, not from this repository, so it is the one
+component Renovate cannot see and nothing in git records its version. Updating is a manual
+re-apply.
+
+**1. Check what is running and pick a target:**
+
+```
+kubectl get deploy argocd-server -n argocd -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
+```
+
+Releases: <https://github.com/argoproj/argo-cd/releases>. Read the upgrade notes for every minor
+version you skip: <https://argo-cd.readthedocs.io/en/stable/operator-manual/upgrading/overview/>
+
+**2. Apply a pinned tag** — never `stable`, which silently jumps minor versions:
+
+```
+kubectl apply -n argocd --server-side --force-conflicts \
+  -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.1/manifests/install.yaml
+```
+
+`--server-side` is required (the CRDs are too large for a client-side apply). This is safe for
+your customizations: `install.yaml` ships `argocd-cm` with only its own `resource.*` keys and
+`argocd-secret` with no data at all, so server-side apply leaves `kustomize.buildOptions`,
+`timeout.reconciliation` and everything sealed into `argocd-secret` untouched. `root-bootstrap`
+re-syncs `argocd-cm` afterwards regardless.
+
+**3. Remove dex and notifications again** — the re-apply brings them back:
+
+```
+kubectl delete deploy argocd-dex-server argocd-notifications-controller -n argocd
+kubectl delete svc argocd-dex-server argocd-notifications-controller-metrics -n argocd
+kubectl delete sa,role,rolebinding argocd-dex-server argocd-notifications-controller -n argocd
+kubectl delete cm argocd-notifications-cm -n argocd
+kubectl delete secret argocd-notifications-secret -n argocd
+```
+
+**4. Verify:**
+
+```
+kubectl rollout status deploy/argocd-server -n argocd --timeout=300s
+kubectl rollout status sts/argocd-application-controller -n argocd --timeout=300s
+kubectl get application -n argocd
+```
+
+All applications must return to Synced/Healthy. If the UI 404s or fails through Traefik, restart
+the server as described under [Verify setup](#verify-setup).
