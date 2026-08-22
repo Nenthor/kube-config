@@ -18,10 +18,10 @@ persistence:
 resources:
   requests:
     cpu: 200m
-    memory: 300Mi
+    memory: 800Mi
   limits:
     cpu: 1000m
-    memory: 768Mi
+    memory: 1200Mi
 
 extraEnvVars:
   # Avoids loading the local sentence-transformers embedding model into memory
