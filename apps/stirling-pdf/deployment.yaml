@@ -18,6 +18,7 @@ spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
+        fsGroup: 1000
       containers:
         - name: stirling-pdf-container
           image: stirlingtools/stirling-pdf:2.14.3
@@ -43,7 +44,15 @@ spec:
           volumeMounts:
             - mountPath: /configs
               name: stirling-pdf-data
+            - mountPath: /tmp
+              name: stirling-pdf-tmp
+            - mountPath: /home/stirlingpdfuser
+              name: stirling-pdf-home
       volumes:
         - name: stirling-pdf-data
           persistentVolumeClaim:
             claimName: stirling-pdf-pvc
+        - name: stirling-pdf-tmp
+          emptyDir: {}
+        - name: stirling-pdf-home
+          emptyDir: {}
