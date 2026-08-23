@@ -50,5 +50,6 @@ spec:
       crowdsecAppsecHost: 'crowdsec-appsec.crowdsec.svc.cluster.local:7422'
       crowdsecAppsecFailureBlock: true
       crowdsecAppsecUnreachableBlock: false
+      crowdsecAppsecUnreadableBodyBlock: false
       # forwardedHeadersTrustedIPs:
       #   - '10.77.20.0/24'
