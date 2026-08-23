@@ -6,10 +6,10 @@ metadata:
   namespace: traefik
   annotations:
     metallb.io/loadBalancerIPs: '10.77.20.200'
-    metallb.io/allow-shared-ip: 'shared-traefik-forgejo-ip'
     argocd.argoproj.io/sync-wave: '-1'
 spec:
   type: LoadBalancer
+  externalTrafficPolicy: Local
   selector:
     app.kubernetes.io/name: traefik
     app.kubernetes.io/instance: traefik-traefik
@@ -39,6 +39,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '-1'
 spec:
   type: LoadBalancer
+  externalTrafficPolicy: Local
   selector:
     app.kubernetes.io/name: traefik
     app.kubernetes.io/instance: traefik-traefik
@@ -68,6 +69,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '-1'
 spec:
   type: LoadBalancer
+  externalTrafficPolicy: Local
   selector:
     app.kubernetes.io/name: traefik
     app.kubernetes.io/instance: traefik-traefik

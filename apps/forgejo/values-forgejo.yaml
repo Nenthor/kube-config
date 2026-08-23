@@ -19,9 +19,9 @@ service:
   ssh:
     type: LoadBalancer
     port: 22
+    externalTrafficPolicy: Local
     annotations:
-      metallb.io/loadBalancerIPs: '10.77.20.200'
-      metallb.io/allow-shared-ip: 'shared-traefik-forgejo-ip'
+      metallb.io/loadBalancerIPs: '10.77.20.220'
 
 ingress:
   enabled: true

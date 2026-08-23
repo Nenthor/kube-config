@@ -59,6 +59,9 @@ spec:
             - mountPath: /etc/crowdsec/appsec-configs/nentwich/traefik-appsec.yaml
               subPath: traefik-appsec.yaml
               name: appsec-config
+            - mountPath: /etc/crowdsec/contexts/nentwich/traefik-appsec-context.yaml
+              subPath: traefik-appsec-context.yaml
+              name: appsec-config
             - mountPath: /var/lib/crowdsec/data
               name: crowdsec-data
       volumes:
