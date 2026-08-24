@@ -46,7 +46,7 @@ spec:
   ports:
     - name: web
       port: 80
-      targetPort: 8001
+      targetPort: 8000
       protocol: TCP
     - name: websecure
       port: 443
@@ -76,7 +76,7 @@ spec:
   ports:
     - name: web
       port: 80
-      targetPort: 8002
+      targetPort: 8000
       protocol: TCP
     - name: websecure
       port: 443
@@ -106,7 +106,7 @@ spec:
   ports:
     - name: web
       port: 80
-      targetPort: 8003
+      targetPort: 8000
       protocol: TCP
     - name: websecure
       port: 443
