@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailpit-app
+  namespace: mailpit
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mailpit-app
+  template:
+    metadata:
+      labels:
+        app: mailpit-app
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        fsGroup: 1000
+      containers:
+        - name: mailpit-container
+          image: axllent/mailpit:v1.30.7
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ['ALL']
+          ports:
+            - containerPort: 8025
+              name: http
+            - containerPort: 1025
+              name: smtp
+          env:
+            - name: MP_DATABASE
+              value: /data/mailpit.db
+            - name: MP_UI_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: mailpit-ui-secret
+                  key: MP_UI_AUTH
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          volumeMounts:
+            - mountPath: /data
+              name: mailpit-data
+      volumes:
+        - name: mailpit-data
+          persistentVolumeClaim:
+            claimName: mailpit-pvc
