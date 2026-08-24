@@ -3,7 +3,7 @@ kind: Kustomization
 
 images:
   - name: vaultwarden/server
-    newTag: 1.37.1-alpine
+    newTag: 1.37.2-alpine
 
 resources:
   - deployment.yaml
