@@ -1,0 +1,37 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ghost-route
+  namespace: ghost
+  annotations:
+    argocd.argoproj.io/sync-wave: '4'
+spec:
+  entryPoints:
+    - ws-pillagernews
+  routes:
+    - kind: Rule
+      match: Host(`pillagernews.com`)
+      services:
+        - name: ghost-service
+          port: 80
+  tls: {}
+
+---
+# Admin panel on its own hostname, matching admin__url in ghost-deployment.yaml.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ghost-admin-route
+  namespace: ghost
+  annotations:
+    argocd.argoproj.io/sync-wave: '4'
+spec:
+  entryPoints:
+    - ws-pillagernews
+  routes:
+    - kind: Rule
+      match: Host(`admin.pillagernews.com`)
+      services:
+        - name: ghost-service
+          port: 80
+  tls: {}
