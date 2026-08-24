@@ -86,7 +86,7 @@ ports:
     http3: *securedHttp3
 
   # Cloudflare ips. Ranges: https://www.cloudflare.com/ips/ (re-check periodically, they do change)
-  ws-pillagernews:
+  ws-pillager:
     port: 8043
     exposedPort: 443
     protocol: TCP

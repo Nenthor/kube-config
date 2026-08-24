@@ -7,7 +7,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '4'
 spec:
   entryPoints:
-    - ws-pillagernews
+    - ws-pillager
   routes:
     - kind: Rule
       match: Host(`pillagernews.com`)
@@ -27,7 +27,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '4'
 spec:
   entryPoints:
-    - ws-pillagernews
+    - ws-pillager
   routes:
     - kind: Rule
       match: Host(`admin.pillagernews.com`)
