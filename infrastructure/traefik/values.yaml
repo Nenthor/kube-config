@@ -96,6 +96,7 @@ tlsStore:
       - secretName: wildcard-nentwich-dev-tls
       - secretName: wildcard-home-nentwich-dev-tls
       - secretName: wildcard-civtale-de-tls
+      - secretName: wildcard-pillagernews-com-tls
 
 metrics:
   prometheus:

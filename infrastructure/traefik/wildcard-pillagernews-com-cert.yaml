@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-pillagernews-com
+  namespace: traefik
+spec:
+  secretName: wildcard-pillagernews-com-tls
+  issuerRef:
+    name: letsencrypt-production # Options: letsencrypt-production or letsencrypt-staging
+    kind: ClusterIssuer
+  dnsNames:
+    - 'pillagernews.com'
+    - '*.pillagernews.com'
