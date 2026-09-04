@@ -15,6 +15,7 @@ spec:
       labels:
         app: homepage-app
     spec:
+      automountServiceAccountToken: false
       securityContext:
         seccompProfile:
           type: RuntimeDefault
@@ -34,7 +35,7 @@ spec:
           resources:
             requests:
               cpu: 10m
-              memory: 32Mi
+              memory: 48Mi
             limits:
               cpu: 300m
-              memory: 1Gi
+              memory: 128Mi

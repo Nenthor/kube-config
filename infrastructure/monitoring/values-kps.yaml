@@ -47,7 +47,6 @@ grafana:
 
   priorityClassName: platform-important
 
-  # Grafana evaluates and delivers alerts itself, so no Alertmanager is needed.
   sidecar:
     dashboards:
       enabled: true
@@ -55,7 +54,6 @@ grafana:
         HEALTH_PORT: '8081'
     datasources:
       enabled: true
-      # Alertmanager is disabled, so don't provision a datasource pointing at it.
       alertmanager:
         enabled: false
       env:
@@ -70,27 +68,6 @@ grafana:
 
 alertmanager:
   enabled: false
-
-  # serviceMonitor:
-  #   selfMonitor: false
-
-  # alertmanagerSpec:
-  #   replicas: 1
-  #   resources:
-  #     requests:
-  #       cpu: 10m
-  #       memory: 32Mi
-  #     limits:
-  #       cpu: 50m
-  #       memory: 64Mi
-  #   storage:
-  #     volumeClaimTemplate:
-  #       spec:
-  #         storageClassName: local-path
-  #         accessModes: ['ReadWriteOnce']
-  #         resources:
-  #           requests:
-  #             storage: 1Gi
 
 prometheus:
   enabled: true

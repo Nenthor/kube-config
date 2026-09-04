@@ -15,6 +15,7 @@ spec:
       labels:
         app: infra-bot-app
     spec:
+      automountServiceAccountToken: false
       securityContext:
         seccompProfile:
           type: RuntimeDefault

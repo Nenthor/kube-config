@@ -9,6 +9,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '1'
 spec:
   instances: 1
+  priorityClassName: platform-important
 
   storage:
     size: 16Gi

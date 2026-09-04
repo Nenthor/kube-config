@@ -15,6 +15,7 @@ spec:
       labels:
         app: it-tools-app
     spec:
+      automountServiceAccountToken: false
       securityContext:
         seccompProfile:
           type: RuntimeDefault
@@ -31,7 +32,7 @@ spec:
           resources:
             requests:
               cpu: 10m
-              memory: 128Mi
+              memory: 64Mi
             limits:
               cpu: 200m
-              memory: 512Mi
+              memory: 256Mi

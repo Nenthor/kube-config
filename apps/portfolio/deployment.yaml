@@ -15,6 +15,7 @@ spec:
       labels:
         app: portfolio-app
     spec:
+      automountServiceAccountToken: false
       securityContext:
         seccompProfile:
           type: RuntimeDefault

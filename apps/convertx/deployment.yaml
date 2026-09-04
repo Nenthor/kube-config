@@ -15,6 +15,7 @@ spec:
       labels:
         app: convertx-app
     spec:
+      automountServiceAccountToken: false
       securityContext:
         seccompProfile:
           type: RuntimeDefault
@@ -43,7 +44,7 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 256Mi
+              memory: 512Mi
             limits:
               cpu: '2'
               # TODO: ConvertX buffers the whole file in RAM for both upload and: https://github.com/C4illin/ConvertX/issues/364

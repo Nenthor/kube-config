@@ -15,6 +15,7 @@ spec:
       labels:
         app: screenshare-webrtc-app
     spec:
+      automountServiceAccountToken: false
       securityContext:
         seccompProfile:
           type: RuntimeDefault

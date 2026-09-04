@@ -6,6 +6,7 @@ images:
     newTag: 1.37.2-alpine
 
 resources:
+  - networkpolicy.yaml
   - deployment.yaml
   - db-secret.yaml
   - admin-token.yaml
