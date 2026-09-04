@@ -12,3 +12,9 @@ helmCharts:
 
 resources:
   - grafana-admin-credentials.yaml
+  - pvc-alerts.yaml
+  - cluster-alerts.yaml
+  - edge-alerts.yaml
+  - grafana-alerting.yaml
+  - grafana-contactpoint-secret.yaml
+  - grafana-dashboard-homelab.yaml

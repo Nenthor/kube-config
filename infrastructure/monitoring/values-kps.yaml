@@ -45,6 +45,9 @@ grafana:
     accessModes: ['ReadWriteOnce']
     size: 2Gi
 
+  priorityClassName: platform-important
+
+  # Grafana evaluates and delivers alerts itself, so no Alertmanager is needed.
   sidecar:
     dashboards:
       enabled: true
@@ -52,8 +55,18 @@ grafana:
         HEALTH_PORT: '8081'
     datasources:
       enabled: true
+      # Alertmanager is disabled, so don't provision a datasource pointing at it.
+      alertmanager:
+        enabled: false
       env:
         HEALTH_PORT: '8082'
+    alerts:
+      enabled: true
+      label: grafana_alert
+      labelValue: '1'
+      searchNamespace: monitoring
+      env:
+        HEALTH_PORT: '8083'
 
 alertmanager:
   enabled: false
@@ -87,8 +100,9 @@ prometheus:
 
   prometheusSpec:
     replicas: 1
+    priorityClassName: platform-important
     retention: 365d
-    retentionSize: 16GiB
+    retentionSize: 8GiB
     scrapeInterval: 30s
 
     serviceMonitorSelectorNilUsesHelmValues: false
@@ -126,9 +140,53 @@ kubeScheduler:
 kubeProxy:
   enabled: false
 nodeExporter:
-  enabled: false
+  enabled: true
+prometheus-node-exporter:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 24Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
+  prometheus:
+    monitor:
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: 'node_filesystem_(avail_bytes|size_bytes|files|files_free|readonly)|node_memory_(MemAvailable_bytes|MemTotal_bytes)|node_load(1|5|15)|node_cpu_seconds_total|node_time_seconds|node_boot_time_seconds|node_vmstat_pgmajfault'
+          action: keep
+        # Only real filesystems - drop the per-container overlay/tmpfs noise.
+        - sourceLabels: [fstype]
+          regex: 'tmpfs|overlay|squashfs|ramfs|fuse.*|iso9660|autofs|binfmt_misc|cgroup.*|debugfs|devpts|mqueue|nsfs|proc|sysfs|tracefs'
+          action: drop
+
 kubeStateMetrics:
-  enabled: false
+  enabled: true
+kube-state-metrics:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 48Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+  metricLabelsAllowlist:
+    - pods=[app]
+  collectors:
+    - pods
+    - deployments
+    - statefulsets
+    - daemonsets
+    - nodes
+    - persistentvolumeclaims
+    - jobs
+    - cronjobs
+  prometheus:
+    monitor:
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: 'kube_pod_container_status_(restarts_total|last_terminated_reason|waiting_reason|ready)|kube_pod_container_resource_(limits|requests)|kube_pod_status_(phase|ready)|kube_deployment_status_replicas_(available|unavailable)|kube_deployment_spec_replicas|kube_statefulset_status_replicas_ready|kube_statefulset_replicas|kube_daemonset_status_number_(ready|unavailable)|kube_daemonset_status_desired_number_scheduled|kube_node_status_condition|kube_node_spec_unschedulable|kube_persistentvolumeclaim_status_phase|kube_job_status_failed|kube_job_failed'
+          action: keep
 
 prometheusOperator:
   enabled: true
@@ -141,5 +199,5 @@ kubelet:
         action: keep
     metricRelabelings:
       - sourceLabels: [__name__]
-        regex: 'kubelet_volume_stats_available_bytes'
+        regex: 'kubelet_volume_stats_(available|capacity|used)_bytes|kubelet_volume_stats_inodes(_free|_used)?'
         action: keep

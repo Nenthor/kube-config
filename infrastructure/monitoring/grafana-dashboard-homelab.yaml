@@ -1,0 +1,277 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-homelab
+  namespace: monitoring
+  labels:
+    grafana_dashboard: '1'
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+data:
+  homelab-overview.json: |
+    {
+      "uid": "homelab-overview",
+      "title": "Homelab Overview",
+      "tags": ["homelab"],
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "refresh": "1m",
+      "time": { "from": "now-6h", "to": "now" },
+      "templating": { "list": [] },
+      "panels": [
+        {
+          "type": "row",
+          "title": "Node",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }
+        },
+        {
+          "type": "stat",
+          "title": "CPU used",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 5, "w": 6, "x": 0, "y": 1 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 0.75 },
+                  { "color": "red", "value": 0.9 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "editorMode": "code",
+              "expr": "1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m]))",
+              "legendFormat": "cpu"
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Memory available",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 5, "w": 6, "x": 6, "y": 1 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "yellow", "value": 0.15 },
+                  { "color": "green", "value": 0.3 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "editorMode": "code",
+              "expr": "node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes",
+              "legendFormat": "available"
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Root disk free",
+          "description": "All PVCs are local-path on this disk.",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 5, "w": 6, "x": 12, "y": 1 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "yellow", "value": 0.2 },
+                  { "color": "green", "value": 0.35 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "editorMode": "code",
+              "expr": "node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"\"} / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"\"}",
+              "legendFormat": "free"
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Pod restarts (24h)",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 5, "w": 6, "x": 18, "y": 1 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 1 },
+                  { "color": "red", "value": 5 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "editorMode": "code",
+              "expr": "sum(increase(kube_pod_container_status_restarts_total[24h]))",
+              "legendFormat": "restarts"
+            }
+          ]
+        },
+        {
+          "type": "row",
+          "title": "Workloads",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 }
+        },
+        {
+          "type": "timeseries",
+          "title": "Container memory working set",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 7 },
+          "fieldConfig": { "defaults": { "unit": "bytes" } },
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["max"] } },
+          "targets": [
+            {
+              "refId": "A",
+              "editorMode": "code",
+              "expr": "topk(15, sum by (namespace, pod) (container_memory_working_set_bytes{container!=\"\",container!=\"POD\"}))",
+              "legendFormat": "{{namespace}}/{{pod}}"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Container CPU",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 7 },
+          "fieldConfig": { "defaults": { "unit": "short" } },
+          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["max"] } },
+          "targets": [
+            {
+              "refId": "A",
+              "editorMode": "code",
+              "expr": "topk(15, sum by (namespace, pod) (rate(container_cpu_usage_seconds_total{container!=\"\",container!=\"POD\"}[5m])))",
+              "legendFormat": "{{namespace}}/{{pod}}"
+            }
+          ]
+        },
+        {
+          "type": "bargauge",
+          "title": "PVC used",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 15 },
+          "options": { "displayMode": "gradient", "orientation": "horizontal" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 0.75 },
+                  { "color": "red", "value": 0.9 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "instant": true,
+              "editorMode": "code",
+              "expr": "1 - (kubelet_volume_stats_available_bytes / kubelet_volume_stats_capacity_bytes)",
+              "legendFormat": "{{namespace}}/{{persistentvolumeclaim}}"
+            }
+          ]
+        },
+        {
+          "type": "bargauge",
+          "title": "TLS certificate days remaining",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 15 },
+          "options": { "displayMode": "gradient", "orientation": "horizontal" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "d",
+              "min": 0,
+              "max": 90,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "yellow", "value": 14 },
+                  { "color": "green", "value": 25 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "instant": true,
+              "editorMode": "code",
+              "expr": "(traefik_tls_certs_not_after - time()) / 86400",
+              "legendFormat": "{{cn}}"
+            }
+          ]
+        },
+        {
+          "type": "row",
+          "title": "Edge",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 23 }
+        },
+        {
+          "type": "timeseries",
+          "title": "Requests per second by entrypoint",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+          "fieldConfig": { "defaults": { "unit": "reqps" } },
+          "targets": [
+            {
+              "refId": "A",
+              "editorMode": "code",
+              "expr": "sum by (entrypoint) (rate(traefik_entrypoint_requests_total[5m]))",
+              "legendFormat": "{{entrypoint}}"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "5xx ratio by entrypoint",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+          "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0 } },
+          "targets": [
+            {
+              "refId": "A",
+              "editorMode": "code",
+              "expr": "sum by (entrypoint) (rate(traefik_entrypoint_requests_total{code=~\"5..\"}[10m])) / sum by (entrypoint) (rate(traefik_entrypoint_requests_total[10m]))",
+              "legendFormat": "{{entrypoint}}"
+            }
+          ]
+        }
+      ]
+    }

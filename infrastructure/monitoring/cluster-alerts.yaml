@@ -1,0 +1,206 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cluster-alerts
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+spec:
+  groups:
+    # Node health. Every PVC here is local-path, i.e. the node root disk, so
+    # node disk exhaustion is the single most likely way this cluster dies.
+    - name: node.rules
+      rules:
+        - alert: NodeDiskFillingUp
+          expr: |
+            (
+              node_filesystem_avail_bytes{mountpoint="/",fstype!=""}
+                / node_filesystem_size_bytes{mountpoint="/",fstype!=""}
+            ) < 0.15
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: 'Node {{ $labels.instance }} root disk is {{ $value | humanizePercentage }} free'
+            description: >-
+              All PVCs are local-path bind mounts on this disk. When it fills,
+              k3s, containerd and every stateful workload stop together.
+              Check: journalctl vacuum, crictl image prune, Prometheus TSDB size.
+
+        - alert: NodeDiskWillFillIn24h
+          # Linear prediction over 6h - catches a slow leak before it is urgent.
+          expr: |
+            predict_linear(node_filesystem_avail_bytes{mountpoint="/",fstype!=""}[6h], 24 * 3600) < 0
+              and node_filesystem_avail_bytes{mountpoint="/",fstype!=""} / node_filesystem_size_bytes{mountpoint="/",fstype!=""} < 0.40
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Node {{ $labels.instance }} root disk fills within 24h at current rate'
+            description: 'Projected to reach 0 bytes free within 24 hours based on the last 6 hours of growth.'
+
+        - alert: NodeInodesLow
+          expr: node_filesystem_files_free{mountpoint="/",fstype!=""} / node_filesystem_files{mountpoint="/",fstype!=""} < 0.15
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: 'Node {{ $labels.instance }} is low on inodes ({{ $value | humanizePercentage }} free)'
+            description: 'Inode exhaustion fails writes even with free bytes. Usually many small container layer files.'
+
+        - alert: NodeMemoryPressure
+          expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.10
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Node {{ $labels.instance }} has {{ $value | humanizePercentage }} memory available'
+            description: >-
+              Container memory limits in this cluster oversubscribe node RAM.
+              Sustained pressure triggers kubelet eviction, and Traefik is
+              BestEffort-adjacent, so ingress can be an early casualty.
+
+        - alert: NodeFilesystemReadOnly
+          expr: node_filesystem_readonly{mountpoint="/",fstype!=""} == 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: 'Node {{ $labels.instance }} remounted root filesystem read-only'
+            description: 'Almost always underlying disk or Proxmox storage failure. Nothing will write until this is resolved.'
+
+        - alert: NodeNotReady
+          expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: 'Node {{ $labels.node }} is not Ready'
+
+    # Persistent volumes
+    - name: pvc.rules
+      rules:
+        - alert: PVCWillFillIn24h
+          expr: |
+            predict_linear(kubelet_volume_stats_available_bytes[6h], 24 * 3600) < 0
+              and kubelet_volume_stats_available_bytes / kubelet_volume_stats_capacity_bytes < 0.40
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: 'PVC {{ $labels.persistentvolumeclaim }} fills within 24h'
+            description: 'PVC {{ $labels.persistentvolumeclaim }} in {{ $labels.namespace }} is projected to run out of space within 24 hours.'
+
+        - alert: PVCInodesLow
+          expr: kubelet_volume_stats_inodes_free / kubelet_volume_stats_inodes < 0.15
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'PVC {{ $labels.persistentvolumeclaim }} is low on inodes'
+            description: 'PVC {{ $labels.persistentvolumeclaim }} in {{ $labels.namespace }} has {{ $value | humanizePercentage }} inodes free.'
+
+    # Workload health
+    - name: workload.rules
+      rules:
+        - alert: PodCrashLooping
+          expr: increase(kube_pod_container_status_restarts_total[1h]) > 5
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Pod {{ $labels.namespace }}/{{ $labels.pod }} is crash looping'
+            description: 'Container {{ $labels.container }} restarted {{ $value | printf "%.0f" }} times in the last hour.'
+
+        - alert: PodOOMKilled
+          expr: kube_pod_container_status_last_terminated_reason{reason="OOMKilled"} == 1
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Pod {{ $labels.namespace }}/{{ $labels.pod }} was OOMKilled'
+            description: >-
+              Container {{ $labels.container }} exceeded its memory limit.
+              Raise the limit or find the leak - repeated OOMKills on a
+              stateful pod risk data corruption.
+
+        - alert: ContainerNearMemoryLimit
+          expr: |
+            container_memory_working_set_bytes{container!="",container!="POD"}
+              / on(namespace,pod,container) group_left
+                kube_pod_container_resource_limits{resource="memory"}
+            > 0.90
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: '{{ $labels.namespace }}/{{ $labels.pod }} is at {{ $value | humanizePercentage }} of its memory limit'
+            description: 'Container {{ $labels.container }} is close to being OOMKilled.'
+
+        - alert: DeploymentReplicasUnavailable
+          expr: kube_deployment_status_replicas_unavailable > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has unavailable replicas'
+
+        - alert: StatefulSetReplicasUnready
+          expr: |
+            kube_statefulset_status_replicas_ready
+              < on(namespace,statefulset) kube_statefulset_replicas
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} has unready replicas'
+
+        - alert: DaemonSetPodsUnavailable
+          expr: kube_daemonset_status_number_unavailable > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} has unavailable pods'
+
+        - alert: PVCPending
+          expr: kube_persistentvolumeclaim_status_phase{phase="Pending"} == 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} is stuck Pending'
+            description: 'local-path binds on first consumer; a lasting Pending usually means no node has space or the pod cannot schedule.'
+
+    # Scrape health - a target that stops being scraped silently disables
+    # every alert built on top of it, so alert on the absence itself.
+    - name: monitoring.rules
+      rules:
+        - alert: PrometheusTargetDown
+          expr: up == 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Prometheus target {{ $labels.job }} ({{ $labels.instance }}) is down'
+            description: 'Scraping has failed for 15 minutes. Any alert depending on this job is now blind.'
+
+        - alert: KubeStateMetricsAbsent
+          expr: absent(kube_pod_container_status_restarts_total)
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: 'kube-state-metrics is not reporting'
+            description: 'All workload health alerts (crashloop, OOMKill, replica availability) are dead while this fires.'
+
+        - alert: NodeExporterAbsent
+          expr: absent(node_filesystem_avail_bytes{mountpoint="/"})
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: 'node-exporter is not reporting'
+            description: 'All node disk and memory alerts are dead while this fires.'

@@ -1,0 +1,265 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alerting-policies
+  namespace: monitoring
+  labels:
+    grafana_alert: '1'
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+data:
+  policies.yaml: |
+    apiVersion: 1
+    policies:
+      - orgId: 1
+        receiver: homelab-default
+        group_by: ['alertname', 'namespace']
+        group_wait: 30s
+        group_interval: 5m
+        repeat_interval: 12h
+        routes:
+          - receiver: homelab-default
+            object_matchers:
+              - ['severity', '=', 'critical']
+            group_wait: 10s
+            repeat_interval: 1h
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alerting-rules
+  namespace: monitoring
+  labels:
+    grafana_alert: '1'
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+data:
+  rules.yaml: |
+    apiVersion: 1
+    groups:
+      - orgId: 1
+        name: homelab-critical
+        folder: Homelab
+        interval: 1m
+        rules:
+          - uid: homelab-node-disk
+            title: Node root disk critically low
+            condition: B
+            for: 10m
+            noDataState: OK
+            execErrState: Alerting
+            labels:
+              severity: critical
+            annotations:
+              summary: 'Node root disk below 15% free'
+              description: 'All PVCs are local-path on this disk. k3s stops when it fills.'
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: prometheus
+                model:
+                  editorMode: code
+                  expr: node_filesystem_avail_bytes{mountpoint="/",fstype!=""} / node_filesystem_size_bytes{mountpoint="/",fstype!=""} < 0.15
+                  instant: true
+                  intervalMs: 1000
+                  maxDataPoints: 43200
+                  refId: A
+              - refId: B
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: __expr__
+                model:
+                  conditions:
+                    - evaluator: { params: [0], type: gt }
+                      operator: { type: and }
+                      query: { params: [A] }
+                      reducer: { type: last }
+                      type: query
+                  datasource: { type: __expr__, uid: __expr__ }
+                  expression: A
+                  refId: B
+                  type: threshold
+
+          - uid: homelab-node-memory
+            title: Node memory pressure
+            condition: B
+            for: 15m
+            noDataState: OK
+            execErrState: Alerting
+            labels:
+              severity: warning
+            annotations:
+              summary: 'Node has less than 10% memory available'
+              description: 'Sustained pressure triggers kubelet eviction.'
+            data:
+              - refId: A
+                relativeTimeRange: { from: 900, to: 0 }
+                datasourceUid: prometheus
+                model:
+                  editorMode: code
+                  expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.10
+                  instant: true
+                  intervalMs: 1000
+                  maxDataPoints: 43200
+                  refId: A
+              - refId: B
+                relativeTimeRange: { from: 900, to: 0 }
+                datasourceUid: __expr__
+                model:
+                  conditions:
+                    - evaluator: { params: [0], type: gt }
+                      operator: { type: and }
+                      query: { params: [A] }
+                      reducer: { type: last }
+                      type: query
+                  datasource: { type: __expr__, uid: __expr__ }
+                  expression: A
+                  refId: B
+                  type: threshold
+
+          - uid: homelab-pod-oomkilled
+            title: Pod OOMKilled
+            condition: B
+            for: 1m
+            noDataState: OK
+            execErrState: Alerting
+            labels:
+              severity: warning
+            annotations:
+              summary: 'A container was OOMKilled'
+              description: 'Container {{ $labels.container }} in {{ $labels.namespace }}/{{ $labels.pod }} exceeded its memory limit.'
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: prometheus
+                model:
+                  editorMode: code
+                  expr: kube_pod_container_status_last_terminated_reason{reason="OOMKilled"} == 1
+                  instant: true
+                  intervalMs: 1000
+                  maxDataPoints: 43200
+                  refId: A
+              - refId: B
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: __expr__
+                model:
+                  conditions:
+                    - evaluator: { params: [0], type: gt }
+                      operator: { type: and }
+                      query: { params: [A] }
+                      reducer: { type: last }
+                      type: query
+                  datasource: { type: __expr__, uid: __expr__ }
+                  expression: A
+                  refId: B
+                  type: threshold
+
+          - uid: homelab-pod-crashloop
+            title: Pod crash looping
+            condition: B
+            for: 10m
+            noDataState: OK
+            execErrState: Alerting
+            labels:
+              severity: warning
+            annotations:
+              summary: 'Pod restarting repeatedly'
+              description: '{{ $labels.namespace }}/{{ $labels.pod }} restarted more than 5 times in an hour.'
+            data:
+              - refId: A
+                relativeTimeRange: { from: 3600, to: 0 }
+                datasourceUid: prometheus
+                model:
+                  editorMode: code
+                  expr: increase(kube_pod_container_status_restarts_total[1h]) > 5
+                  instant: true
+                  intervalMs: 1000
+                  maxDataPoints: 43200
+                  refId: A
+              - refId: B
+                relativeTimeRange: { from: 3600, to: 0 }
+                datasourceUid: __expr__
+                model:
+                  conditions:
+                    - evaluator: { params: [0], type: gt }
+                      operator: { type: and }
+                      query: { params: [A] }
+                      reducer: { type: last }
+                      type: query
+                  datasource: { type: __expr__, uid: __expr__ }
+                  expression: A
+                  refId: B
+                  type: threshold
+
+          - uid: homelab-cert-expiry
+            title: TLS certificate expiring
+            condition: B
+            for: 1h
+            noDataState: OK
+            execErrState: Alerting
+            labels:
+              severity: critical
+            annotations:
+              summary: 'A TLS certificate expires in under 7 days'
+              description: 'cert-manager DNS01 renewal is failing. Every host on this cert breaks on expiry.'
+            data:
+              - refId: A
+                relativeTimeRange: { from: 3600, to: 0 }
+                datasourceUid: prometheus
+                model:
+                  editorMode: code
+                  expr: (traefik_tls_certs_not_after - time()) / 86400 < 7
+                  instant: true
+                  intervalMs: 1000
+                  maxDataPoints: 43200
+                  refId: A
+              - refId: B
+                relativeTimeRange: { from: 3600, to: 0 }
+                datasourceUid: __expr__
+                model:
+                  conditions:
+                    - evaluator: { params: [0], type: gt }
+                      operator: { type: and }
+                      query: { params: [A] }
+                      reducer: { type: last }
+                      type: query
+                  datasource: { type: __expr__, uid: __expr__ }
+                  expression: A
+                  refId: B
+                  type: threshold
+
+          - uid: homelab-target-down
+            title: Prometheus target down
+            condition: B
+            for: 15m
+            noDataState: OK
+            execErrState: Alerting
+            labels:
+              severity: warning
+            annotations:
+              summary: 'A scrape target has been down for 15 minutes'
+              description: 'Job {{ $labels.job }} is not being scraped. Alerts built on it are blind.'
+            data:
+              - refId: A
+                relativeTimeRange: { from: 900, to: 0 }
+                datasourceUid: prometheus
+                model:
+                  editorMode: code
+                  expr: up == 0
+                  instant: true
+                  intervalMs: 1000
+                  maxDataPoints: 43200
+                  refId: A
+              - refId: B
+                relativeTimeRange: { from: 900, to: 0 }
+                datasourceUid: __expr__
+                model:
+                  conditions:
+                    - evaluator: { params: [0], type: gt }
+                      operator: { type: and }
+                      query: { params: [A] }
+                      reducer: { type: last }
+                      type: query
+                  datasource: { type: __expr__, uid: __expr__ }
+                  expression: A
+                  refId: B
+                  type: threshold

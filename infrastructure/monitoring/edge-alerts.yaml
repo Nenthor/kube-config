@@ -1,0 +1,66 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: edge-alerts
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+spec:
+  groups:
+    - name: traefik.rules
+      rules:
+        - alert: TraefikCertExpiringSoon
+          expr: (traefik_tls_certs_not_after - time()) / 86400 < 21
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: 'TLS certificate for {{ $labels.cn }} expires in {{ $value | printf "%.0f" }} days'
+            description: >-
+              cert-manager should have renewed this at the 30-day mark. Check the
+              Certificate and CertificateRequest objects in the traefik namespace
+              and the cert-manager logs for a DNS01 / Cloudflare API failure.
+
+        - alert: TraefikCertExpiringCritical
+          expr: (traefik_tls_certs_not_after - time()) / 86400 < 7
+          for: 1h
+          labels:
+            severity: critical
+          annotations:
+            summary: 'TLS certificate for {{ $labels.cn }} expires in {{ $value | printf "%.0f" }} days'
+            description: 'Renewal has been failing for over three weeks. Every hostname on this certificate breaks on expiry.'
+
+        - alert: TraefikDown
+          expr: absent(up{job=~".*traefik.*"} == 1)
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: 'Traefik is not reporting as up'
+            description: 'Nothing reaches the cluster from the Oracle VPS, OPNsense or the LAN while this fires.'
+
+        - alert: TraefikConfigReloadFailing
+          expr: traefik_config_last_reload_failure > traefik_config_last_reload_success
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Traefik failed to reload its dynamic configuration'
+            description: >-
+              Traefik is serving a stale routing table. A malformed IngressRoute
+              or Middleware was likely just synced by ArgoCD - new routes will
+              not take effect until this is fixed.
+
+        - alert: TraefikHigh5xxRate
+          expr: |
+            sum by (entrypoint) (rate(traefik_entrypoint_requests_total{code=~"5.."}[10m]))
+              / sum by (entrypoint) (rate(traefik_entrypoint_requests_total[10m]))
+            > 0.10
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Entrypoint {{ $labels.entrypoint }} is returning {{ $value | humanizePercentage }} 5xx'
+            description: 'Sustained backend failures behind this entrypoint.'
