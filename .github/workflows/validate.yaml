@@ -1,0 +1,58 @@
+name: Validate manifests
+
+# Gates Renovate automerge: every bump must still render and produce valid
+# Kubernetes before it can reach a cluster running prune + selfHeal.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Render and validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: jdx/mise-action@v2
+        with:
+          mise_toml: |
+            [tools]
+            helm = "3.19.0"
+            kustomize = "5.7.1"
+            kubeconform = "0.7.0"
+
+      - name: Cache pulled Helm charts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/helm
+            ~/.local/share/helm
+          key: helm-${{ hashFiles('**/kustomization.yaml') }}
+          restore-keys: helm-
+
+      - name: Render
+        run: |
+          mkdir -p rendered
+          while read -r dir; do
+            echo "  $dir"
+            kustomize build --enable-helm "$dir" > "rendered/${dir//\//_}.yaml"
+          done < <(find apps infrastructure -name kustomization.yaml -printf '%h\n' | sort)
+          { for f in bootstrap/*.yaml root-app.yaml; do echo '---'; cat "$f"; done; } > rendered/bootstrap.yaml
+
+      - name: Validate against schemas
+        run: |
+          kubeconform -strict -summary -ignore-missing-schemas \
+            -skip IngressRoute,ImageUpdater \
+            -kubernetes-version 1.31.0 \
+            -schema-location default \
+            -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \
+            rendered/

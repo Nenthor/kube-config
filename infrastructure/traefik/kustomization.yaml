@@ -9,6 +9,8 @@ helmCharts:
     namespace: traefik
     includeCRDs: true
     valuesFile: values.yaml
+    apiVersions:
+      - monitoring.coreos.com/v1
 
 resources:
   - wildcard-nentwich-dev-cert.yaml

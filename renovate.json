@@ -1,8 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
   "timezone": "Europe/Berlin",
-  "platformAutomerge": false,
+  "labels": ["dependencies"],
+
+  "platformAutomerge": true,
+  "minimumReleaseAge": "3 days",
+
   "hostRules": [
     {
       "matchHost": "docker.io",
@@ -10,28 +14,26 @@
       "password": "{{ secrets.DOCKERHUB_TOKEN }}"
     }
   ],
+
+  "vulnerabilityAlerts": {
+    "description": "Security fixes skip the release-age hold and merge whenever.",
+    "labels": ["security"],
+    "minimumReleaseAge": "0 days",
+    "automerge": true,
+    "schedule": ["at any time"]
+  },
+
   "packageRules": [
     {
-      "description": "Automerge minor and patch updates for stable releases (>= 1.0.0)",
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchCurrentVersion": "!/^0/",
-      "automerge": true,
-      "ignoreTests": true,
-      "automergeSchedule": ["* 3-5 * * *"]
-    },
-    {
-      "description": "Automerge only patch updates for pre-stable releases (0.x.x)",
+      "description": "Automerge all patch updates.",
       "matchUpdateTypes": ["patch"],
-      "matchCurrentVersion": "/^0/",
-      "automerge": true,
-      "ignoreTests": true,
-      "automergeSchedule": ["* 3-5 * * *"]
+      "automerge": true
     },
     {
-      "description": "Require manual pull request review and approval for all major version updates.",
-      "matchUpdateTypes": ["major"],
-      "ignoreTests": true,
-      "automerge": false
+      "description": "Automerge minor updates for stable (>= 1.0.0) packages.",
+      "matchUpdateTypes": ["minor"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
     }
   ]
 }
