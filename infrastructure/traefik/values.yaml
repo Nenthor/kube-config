@@ -52,6 +52,7 @@ ports:
         - 'traefik-crowdsec-bouncer@kubernetescrd'
         - 'traefik-secure-headers@kubernetescrd'
         - 'traefik-compression@kubernetescrd'
+      aliasHeadersStrategy: delete
       # https://doc.traefik.io/traefik/v3.7/migrate/v3/#encoded-characters-configuration-default-values
       encodedCharacters:
         allowEncodedSlash: false
@@ -64,6 +65,14 @@ ports:
     http3: &securedHttp3
       enabled: true
       advertisedPort: 443
+
+  # not used, but traefik default. apply middleware regardless
+  websecure:
+    port: 8443
+    expose:
+      default: false
+    http: *securedHttp
+    http3: *securedHttp3
 
   # *.home.nentwich.dev -> 10.77.20.201 HTTPS
   ws-home:
