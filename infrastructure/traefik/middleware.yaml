@@ -43,9 +43,15 @@ spec:
   plugin:
     crowdsec-bouncer:
       enabled: true
-      crowdsecMode: appsec
+
+      crowdsecMode: stream
       crowdsecLapiHost: '10.77.20.1:8080'
       crowdsecLapiKeyFile: '/etc/traefik/crowdsec/API_KEY'
+
+      updateIntervalSeconds: 10
+      updateMaxFailure: -1
+      streamStartupBlock: false
+
       crowdsecAppsecEnabled: true
       crowdsecAppsecHost: 'crowdsec-appsec.crowdsec.svc.cluster.local:7422'
       crowdsecAppsecFailureBlock: true

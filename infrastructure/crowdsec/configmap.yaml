@@ -14,6 +14,25 @@ data:
     labels:
       type: appsec
 
+  appsec-immediate-ban.yaml: |
+    type: trigger
+    format: 3.0
+    name: nentwich/appsec-immediate-ban
+    description: "Ban an IP on its first AppSec in-band block"
+    filter: "evt.Meta.log_type == 'appsec-block'"
+    groupby: evt.Meta.source_ip
+    # Don't re-alert for the same IP inside a minute.
+    blackhole: 1m
+    labels:
+      service: http
+      confidence: 3
+      spoofable: 0
+      classification:
+        - attack.T1190
+      label: "Blocked by CrowdSec AppSec"
+      behavior: "http:exploit"
+      remediation: true
+
   traefik-appsec.yaml: |
     name: nentwich/traefik-appsec
     default_remediation: ban
