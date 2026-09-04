@@ -12,10 +12,23 @@ spec:
   sourceRepos:
     - '*'
   destinations:
+    - namespace: '!kube-system'
+      server: '*'
+    - namespace: '!argocd'
+      server: '*'
+    - namespace: '!cnpg-database'
+      server: '*'
+    - namespace: '!traefik'
+      server: '*'
+    - namespace: '!cert-manager'
+      server: '*'
+    - namespace: '!metallb'
+      server: '*'
     - namespace: '*'
       server: '*'
   clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
+    - group: ''
+      kind: Namespace
+
   orphanedResources:
     warn: true

@@ -15,7 +15,25 @@ spec:
     - namespace: '*'
       server: '*'
   clusterResourceWhitelist:
-    - group: '*'
+    - group: '' # Namespace
+      kind: '*'
+    - group: 'admissionregistration.k8s.io' # cert-manager, kps webhooks
+      kind: '*'
+    - group: 'apiextensions.k8s.io' # CRDs
+      kind: '*'
+    - group: 'apiregistration.k8s.io'
+      kind: '*'
+    - group: 'cert-manager.io' # ClusterIssuer
+      kind: '*'
+    - group: 'networking.k8s.io' # IngressClass
+      kind: '*'
+    - group: 'rbac.authorization.k8s.io'
+      kind: '*'
+    - group: 'scheduling.k8s.io'
+      kind: '*'
+    - group: 'storage.k8s.io'
+      kind: '*'
+    - group: 'policy'
       kind: '*'
   orphanedResources:
     warn: true
