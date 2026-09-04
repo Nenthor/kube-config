@@ -1,0 +1,60 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: argocd-alerts
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+spec:
+  groups:
+    - name: argocd.rules
+      rules:
+        - alert: ArgoCDAppNotSynced
+          expr: argocd_app_info{sync_status!="Synced"} == 1
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'ArgoCD app {{ $labels.name }} has been {{ $labels.sync_status }} for 30m'
+            description: >-
+              Either a sync is failing or the GitHub webhook is not arriving.
+              With timeout.reconciliation at 24h, drift persists until this is fixed.
+
+        - alert: ArgoCDAppUnhealthy
+          expr: argocd_app_info{health_status!~"Healthy|Progressing"} == 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'ArgoCD app {{ $labels.name }} is {{ $labels.health_status }}'
+            description: 'The application synced but its workloads are not healthy.'
+
+        - alert: ArgoCDSyncFailed
+          expr: increase(argocd_app_sync_total{phase=~"Error|Failed"}[15m]) > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: 'ArgoCD sync failed for {{ $labels.name }}'
+            description: >-
+              A sync attempt errored. With prune and selfHeal enabled, a failing
+              sync means the cluster and git have diverged with no self-correction.
+
+        - alert: ArgoCDClusterDisconnected
+          expr: argocd_cluster_connection_status == 0
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: 'ArgoCD lost connection to cluster {{ $labels.server }}'
+
+        - alert: ArgoCDDown
+          expr: absent(up{job=~"argocd.*"} == 1)
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: 'No ArgoCD metrics target is up'
+            description: 'Nothing is reconciling the cluster, and every other ArgoCD alert is blind while this fires.'

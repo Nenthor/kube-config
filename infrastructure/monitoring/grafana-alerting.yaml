@@ -227,6 +227,80 @@ data:
                   refId: B
                   type: threshold
 
+          - uid: homelab-argocd-sync-failed
+            title: ArgoCD sync failed
+            condition: B
+            for: 5m
+            noDataState: OK
+            execErrState: Alerting
+            labels:
+              severity: critical
+            annotations:
+              summary: 'An ArgoCD sync attempt failed'
+              description: 'Cluster and git have diverged and selfHeal is not correcting it.'
+            data:
+              - refId: A
+                relativeTimeRange: { from: 900, to: 0 }
+                datasourceUid: prometheus
+                model:
+                  editorMode: code
+                  expr: increase(argocd_app_sync_total{phase=~"Error|Failed"}[15m]) > 0
+                  instant: true
+                  intervalMs: 1000
+                  maxDataPoints: 43200
+                  refId: A
+              - refId: B
+                relativeTimeRange: { from: 900, to: 0 }
+                datasourceUid: __expr__
+                model:
+                  conditions:
+                    - evaluator: { params: [0], type: gt }
+                      operator: { type: and }
+                      query: { params: [A] }
+                      reducer: { type: last }
+                      type: query
+                  datasource: { type: __expr__, uid: __expr__ }
+                  expression: A
+                  refId: B
+                  type: threshold
+
+          - uid: homelab-argocd-not-synced
+            title: ArgoCD app out of sync
+            condition: B
+            for: 30m
+            noDataState: OK
+            execErrState: Alerting
+            labels:
+              severity: warning
+            annotations:
+              summary: 'An ArgoCD app has been out of sync for 30 minutes'
+              description: 'Check the GitHub webhook - reconciliation otherwise only runs every 24h.'
+            data:
+              - refId: A
+                relativeTimeRange: { from: 1800, to: 0 }
+                datasourceUid: prometheus
+                model:
+                  editorMode: code
+                  expr: argocd_app_info{sync_status!="Synced"} == 1
+                  instant: true
+                  intervalMs: 1000
+                  maxDataPoints: 43200
+                  refId: A
+              - refId: B
+                relativeTimeRange: { from: 1800, to: 0 }
+                datasourceUid: __expr__
+                model:
+                  conditions:
+                    - evaluator: { params: [0], type: gt }
+                      operator: { type: and }
+                      query: { params: [A] }
+                      reducer: { type: last }
+                      type: query
+                  datasource: { type: __expr__, uid: __expr__ }
+                  expression: A
+                  refId: B
+                  type: threshold
+
           - uid: homelab-target-down
             title: Prometheus target down
             condition: B

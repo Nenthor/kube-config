@@ -19,7 +19,7 @@ data:
     format: 3.0
     name: nentwich/appsec-immediate-ban
     description: "Ban an IP on its first AppSec in-band block"
-    filter: "evt.Meta.log_type == 'appsec-block'"
+    filter: "evt.Meta.log_type == 'appsec-block' && evt.Meta.rule_name not startsWith 'native_rule'"
     groupby: evt.Meta.source_ip
     # Don't re-alert for the same IP inside a minute.
     blackhole: 1m
@@ -39,6 +39,12 @@ data:
     inband_rules:
       - crowdsecurity/base-config
       - crowdsecurity/vpatch-*
+    outofband_rules:
+      - crowdsecurity/crs
+    on_match:
+      - filter: IsOutBand == true
+        apply:
+          - SendAlert()
     pre_eval:
       - filter: IsInBand == true && req.Host == ""
         apply:
