@@ -31,7 +31,7 @@ jobs:
             kubeconform = "0.7.0"
 
       - name: Cache pulled Helm charts
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: |
             ~/.cache/helm
