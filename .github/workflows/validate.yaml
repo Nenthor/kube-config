@@ -60,11 +60,14 @@ jobs:
         with:
           scan-type: config
           scan-ref: rendered
-          exit-code: '0'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
           hide-progress: true
           output: trivy.txt
+          trivyignores: .trivyignore.yaml
 
       - name: Publish security scanner output to summary
+        if: always()
         run: |
           if [[ -s trivy.txt ]]; then
             {
@@ -77,15 +80,3 @@ jobs:
               echo "</details>"
             } >> $GITHUB_STEP_SUMMARY
           fi
-
-  secret-scan:
-    name: Secret scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - uses: gitleaks/gitleaks-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

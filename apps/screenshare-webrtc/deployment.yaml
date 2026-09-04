@@ -24,6 +24,7 @@ spec:
           image: git.nentwich.dev/nentwich/screenshare-webrtc:0.0.2
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
           ports:
@@ -38,3 +39,9 @@ spec:
             limits:
               cpu: 300m
               memory: 256Mi
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

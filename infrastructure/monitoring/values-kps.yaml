@@ -119,6 +119,19 @@ kubeProxy:
 nodeExporter:
   enabled: true
 prometheus-node-exporter:
+  hostNetwork: false
+  hostPID: false
+
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+
+  containerSecurityContext:
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ['ALL']
+
   resources:
     requests:
       cpu: 10m

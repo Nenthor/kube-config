@@ -24,6 +24,7 @@ spec:
           image: git.nentwich.dev/nentwich/crabtrades:1.0.0
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
               add: ['NET_BIND_SERVICE', 'CHOWN', 'SETUID', 'SETGID']
@@ -42,3 +43,9 @@ spec:
             limits:
               cpu: 300m
               memory: 512Mi
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

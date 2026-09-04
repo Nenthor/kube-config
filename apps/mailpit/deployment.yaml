@@ -25,6 +25,7 @@ spec:
           image: axllent/mailpit:v1.30.7
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
           ports:

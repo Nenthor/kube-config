@@ -26,6 +26,7 @@ spec:
           image: git.nentwich.dev/nentwich/infra-bot:1.0.0
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
           envFrom:
@@ -38,3 +39,9 @@ spec:
             limits:
               cpu: 300m
               memory: 256Mi
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

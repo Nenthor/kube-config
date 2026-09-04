@@ -1,0 +1,83 @@
+misconfigurations:
+  - id: AVD-KSV-0041
+    paths:
+      - infrastructure_cert-manager.yaml
+      - infrastructure_cnpg-operator.yaml
+      - infrastructure_monitoring.yaml
+      - infrastructure_traefik.yaml
+    statement: Operator needs Secrets access to function (cert issuance / DB credentials / Alertmanager config / TLS store).
+
+  - id: AVD-KSV-0056
+    paths:
+      - infrastructure_cert-manager.yaml
+      - infrastructure_cnpg-operator.yaml
+      - infrastructure_monitoring.yaml
+    statement: Operator provisions Services/Ingresses for the resources it manages (ACME challenges, Postgres clusters, Alertmanager).
+
+  - id: AVD-KSV-0114
+    paths:
+      - infrastructure_cert-manager.yaml
+      - infrastructure_cnpg-operator.yaml
+      - infrastructure_metallb.yaml
+      - infrastructure_monitoring.yaml
+    statement: Operator owns and updates its own CRD admission webhooks.
+
+  - id: AVD-KSV-0053
+    paths:
+      - infrastructure_cnpg-operator.yaml
+    statement: CloudNativePG execs into its own Postgres pods for backup, restore and failover.
+
+  - id: AVD-KSV-0045
+    paths:
+      - infrastructure_monitoring.yaml
+    statement: Prometheus Operator needs full verbs on its own CRDs to reconcile them.
+
+  - id: AVD-KSV-0009
+    paths:
+      - infrastructure_metallb.yaml
+    statement: frr-k8s/speaker announce BGP/ARP routes from the host network stack by design.
+  - id: AVD-KSV-0005
+    paths:
+      - infrastructure_metallb.yaml
+    statement: SYS_ADMIN is required by the FRR routing daemon to manage network namespaces.
+  - id: AVD-KSV-0119
+    paths:
+      - infrastructure_metallb.yaml
+    statement: NET_RAW is required to speak BGP/ARP/NDP directly on the host network.
+
+  - id: AVD-KSV-0121
+    paths:
+      - infrastructure_monitoring.yaml
+    statement: prometheus-node-exporter mounts the host filesystem read-only to collect host metrics.
+
+  - id: AVD-KSV-0108
+    paths:
+      - apps_pelican.yaml
+      - infrastructure_traefik.yaml
+    statement: ExternalName/externalIPs Service is a deliberate bridge to a host outside the cluster.
+
+  - id: AVD-KSV-0014
+    paths:
+      - apps_ghost.yaml
+      - apps_pelican.yaml
+      - apps_open-webui.yaml
+      - apps_forgejo.yaml
+      - apps_homepage.yaml
+      - apps_portfolio.yaml
+      - apps_stirling-pdf.yaml
+      - infrastructure_crowdsec.yaml
+      - infrastructure_metallb.yaml
+      - infrastructure_monitoring.yaml
+    statement: Needs readOnlyRootFilesystem to be false
+
+  - id: AVD-KSV-0118
+    paths:
+      - apps_forgejo.yaml
+      - apps_open-webui.yaml
+      - infrastructure_metallb.yaml
+    statement: Same containers as AVD-KSV-0014 above - vendored chart defaults, not overridden pending verification.
+
+  - id: AVD-KSV-0017
+    paths:
+      - apps_forgejo.yaml
+    statement: forgejo-runner's dind container needs `privileged` for Docker-in-Docker; this is inherent to running a self-hosted CI runner.

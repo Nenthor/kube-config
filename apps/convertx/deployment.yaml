@@ -24,6 +24,7 @@ spec:
           image: ghcr.io/c4illin/convertx:v0.18.0
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
           ports:
