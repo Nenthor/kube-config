@@ -11,4 +11,4 @@ resources:
 
 images:
   - name: axllent/mailpit
-    newTag: v1.31.0
+    newTag: v1.31.1
