@@ -16,4 +16,4 @@ images:
   - name: ghost
     newTag: 6.62.0-alpine
   - name: mysql
-    newTag: 8.4.11
+    newTag: 9.7.1
