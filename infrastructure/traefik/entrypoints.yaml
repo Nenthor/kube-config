@@ -87,32 +87,32 @@ spec:
       targetPort: 8042
       protocol: UDP
 
----
+# ---
 # pillagernews.com *.pillagernews.com -> 10.77.20.203 (behind Cloudflare proxy)
-apiVersion: v1
-kind: Service
-metadata:
-  name: traefik-pillagernews
-  namespace: traefik
-  annotations:
-    metallb.io/loadBalancerIPs: '10.77.20.203'
-    argocd.argoproj.io/sync-wave: '-1'
-spec:
-  type: LoadBalancer
-  externalTrafficPolicy: Local
-  selector:
-    app.kubernetes.io/name: traefik
-    app.kubernetes.io/instance: traefik-traefik
-  ports:
-    - name: web
-      port: 80
-      targetPort: 8000
-      protocol: TCP
-    - name: websecure
-      port: 443
-      targetPort: 8043
-      protocol: TCP
-    - name: websecure-udp
-      port: 443
-      targetPort: 8043
-      protocol: UDP
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: traefik-pillagernews
+#   namespace: traefik
+#   annotations:
+#     metallb.io/loadBalancerIPs: '10.77.20.203'
+#     argocd.argoproj.io/sync-wave: '-1'
+# spec:
+#   type: LoadBalancer
+#   externalTrafficPolicy: Local
+#   selector:
+#     app.kubernetes.io/name: traefik
+#     app.kubernetes.io/instance: traefik-traefik
+#   ports:
+#     - name: web
+#       port: 80
+#       targetPort: 8000
+#       protocol: TCP
+#     - name: websecure
+#       port: 443
+#       targetPort: 8043
+#       protocol: TCP
+#     - name: websecure-udp
+#       port: 443
+#       targetPort: 8043
+#       protocol: UDP

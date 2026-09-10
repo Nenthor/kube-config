@@ -115,9 +115,7 @@ spec:
       targetPort: 8080
 
 ---
-# Serves `Disallow: /` for /robots.txt on every host across all HTTPS
-# entrypoints. The high priority makes it win over the app `Host(...)` routers,
-# which would otherwise match /robots.txt too.
+# Blocks all bots on all entrypoints
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -131,7 +129,7 @@ spec:
     - websecure
     - ws-home
     - ws-hytale
-    - ws-pillager
+    # - ws-pillager
   routes:
     - kind: Rule
       match: Path(`/robots.txt`)
