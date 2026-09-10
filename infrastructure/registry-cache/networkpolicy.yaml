@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: registry-cache-isolation
+  namespace: registry-cache
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  podSelector:
+    matchLabels:
+      app: registry-cache-app
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Only used by Foregjo as pass-trough
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: forgejo
+      ports:
+        - protocol: TCP
+          port: 5000
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 192.168.0.0/16
+              - 172.16.0.0/12
+              - 169.254.0.0/16 # Link-local
+      ports:
+        - protocol: TCP
+          port: 443

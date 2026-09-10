@@ -36,6 +36,14 @@ spec:
           port: 8040
         - protocol: UDP
           port: 8040
+    # Allow access to pull-through registry
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: registry-cache
+      ports:
+        - protocol: TCP
+          port: 5000
     # Allow access to internet
     - to:
         - ipBlock:

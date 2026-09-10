@@ -58,7 +58,13 @@ volumes:
   - name: runner-cache
     persistentVolumeClaim:
       claimName: forgejo-runner-cache-pvc
+  - name: dind-daemon-config
+    configMap:
+      name: forgejo-dind-daemon-config
 
 volumeMounts:
-  - name: runner-cache
-    mountPath: /data/.cache
+  # Set pull-trough proxy
+  - name: dind-daemon-config
+    mountPath: /etc/docker/daemon.json
+    subPath: daemon.json
+    readOnly: true
