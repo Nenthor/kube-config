@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: searxng-route
+  namespace: searxng
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  entryPoints:
+    - ws-home
+  routes:
+    - kind: Rule
+      match: Host(`search.home.nentwich.dev`)
+      services:
+        - name: searxng-service
+          port: 80
+  tls: {}

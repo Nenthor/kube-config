@@ -8,8 +8,19 @@ ollamaUrls:
 
 pipelines:
   enabled: false
+
 tika:
-  enabled: false
+  enabled: true
+  image:
+    repository: apache/tika
+    tag: 3.2.2.0-full
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      cpu: '1'
+      memory: 2Gi
 
 persistence:
   enabled: true
@@ -30,6 +41,17 @@ extraEnvVars:
   # Avoids loading the local Whisper speech-to-text model into memory
   - name: AUDIO_STT_ENGINE
     value: 'webapi'
+  # Web search
+  - name: ENABLE_WEB_SEARCH
+    value: 'True'
+  - name: WEB_SEARCH_ENGINE
+    value: 'searxng'
+  - name: SEARXNG_QUERY_URL
+    value: 'http://searxng-service.searxng.svc.cluster.local/search?q=<query>'
+  - name: WEB_SEARCH_RESULT_COUNT
+    value: '3'
+  - name: WEB_SEARCH_CONCURRENT_REQUESTS
+    value: '10'
 
   - name: DATABASE_URL
     valueFrom:

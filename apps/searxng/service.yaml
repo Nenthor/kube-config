@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: searxng-service
+  namespace: searxng
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+spec:
+  selector:
+    app: searxng-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
