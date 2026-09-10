@@ -99,6 +99,14 @@ alloy:
             }
           }
 
+          // Pod-network callers are in-cluster plumbing, not traffic. Dropped
+          // before the geoip lookup, which would find nothing for them anyway.
+          stage.drop {
+            source              = "client_ip"
+            expression          = "^10\\.42\\."
+            drop_counter_reason = "cluster_internal_client"
+          }
+
           // Index by when Traefik served the request, not when Alloy read the line.
           stage.timestamp {
             source = "start_utc"

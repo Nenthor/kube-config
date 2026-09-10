@@ -9,7 +9,6 @@ helmCharts:
     namespace: monitoring
     includeCRDs: true
     valuesFile: values-kps.yaml
-  # Request logging: traefik -> alloy -> loki -> grafana, see docs/logging.md
   - name: loki
     repo: oci://ghcr.io/grafana-community/helm-charts/
     version: 18.12.1
