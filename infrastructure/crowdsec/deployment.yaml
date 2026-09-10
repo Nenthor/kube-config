@@ -46,7 +46,7 @@ spec:
                   name: crowdsec-agent-credentials
                   key: AGENT_PASSWORD
             - name: COLLECTIONS
-              value: 'crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules crowdsecurity/appsec-crs'
+              value: 'crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules'
           resources:
             requests:
               cpu: 100m

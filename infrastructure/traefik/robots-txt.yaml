@@ -1,0 +1,142 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: robots-txt
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: '-1'
+data:
+  robots.txt: |
+    User-agent: *
+    Disallow: /
+  nginx.conf: |
+    worker_processes 1;
+    error_log /dev/stderr warn;
+    pid /tmp/nginx.pid;
+    events {
+      worker_connections 128;
+    }
+    http {
+      access_log off;
+      client_body_temp_path /tmp/client_temp;
+      proxy_temp_path /tmp/proxy_temp;
+      fastcgi_temp_path /tmp/fastcgi_temp;
+      uwsgi_temp_path /tmp/uwsgi_temp;
+      scgi_temp_path /tmp/scgi_temp;
+      server {
+        listen 8080;
+        location = /robots.txt {
+          default_type text/plain;
+          alias /etc/nginx/robots.txt;
+        }
+        location / {
+          return 404;
+        }
+      }
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: robots-txt
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: robots-txt
+  template:
+    metadata:
+      labels:
+        app: robots-txt
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: nginx
+          image: nginxinc/nginx-unprivileged:1.29-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ['ALL']
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /robots.txt
+              port: 8080
+          livenessProbe:
+            httpGet:
+              path: /robots.txt
+              port: 8080
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+          volumeMounts:
+            - mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              name: config
+            - mountPath: /etc/nginx/robots.txt
+              subPath: robots.txt
+              name: config
+            - mountPath: /tmp
+              name: tmp
+      volumes:
+        - name: config
+          configMap:
+            name: robots-txt
+        - name: tmp
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: robots-txt
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+spec:
+  selector:
+    app: robots-txt
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+
+---
+# Serves `Disallow: /` for /robots.txt on every host across all HTTPS
+# entrypoints. The high priority makes it win over the app `Host(...)` routers,
+# which would otherwise match /robots.txt too.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: robots-txt
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  entryPoints:
+    - ws-nentwich
+    - websecure
+    - ws-home
+    - ws-hytale
+    - ws-pillager
+  routes:
+    - kind: Rule
+      match: Path(`/robots.txt`)
+      priority: 100000
+      services:
+        - name: robots-txt
+          port: 80
+  tls: {}

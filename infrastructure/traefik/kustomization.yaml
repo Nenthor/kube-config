@@ -20,4 +20,5 @@ resources:
   - entrypoints.yaml
   - middleware.yaml
   - external-ingress-routes.yaml
+  - robots-txt.yaml
   - crowdsec-bouncer-key.yaml
