@@ -61,6 +61,10 @@ singleBinary:
       cpu: '1'
       memory: 1Gi
 
+memberlist:
+  service:
+    publishNotReadyAddresses: true
+
 monitoring:
   serviceMonitor:
     enabled: true
