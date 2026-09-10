@@ -5,6 +5,10 @@ crds:
 
 global:
   podSecurityContext:
+    runAsUser: 473
+    runAsGroup: 473
+    runAsNonRoot: true
+    fsGroup: 473
     seccompProfile:
       type: RuntimeDefault
 
