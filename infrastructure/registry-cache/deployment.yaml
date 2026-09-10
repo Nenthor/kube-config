@@ -18,6 +18,7 @@ spec:
         app: registry-cache-app
     spec:
       automountServiceAccountToken: false
+      enableServiceLinks: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
