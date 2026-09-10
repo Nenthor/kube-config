@@ -4,6 +4,8 @@ global:
   storageClass: 'local-path'
 
 image:
+  registry: code.forgejo.org
+  repository: forgejo/forgejo
   tag: 16.0.4
 
 podSecurityContext:

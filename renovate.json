@@ -7,6 +7,11 @@
   "platformAutomerge": true,
   "minimumReleaseAge": "3 days",
 
+  "helm-values": {
+    "description": "Scan values.yaml files",
+    "managerFilePatterns": ["/(^|/)values-.+\\.ya?ml$/"]
+  },
+
   "hostRules": [
     {
       "matchHost": "docker.io",

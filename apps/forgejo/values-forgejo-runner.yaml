@@ -2,6 +2,11 @@
 
 knownLastVersion: true
 
+image:
+  registry: code.forgejo.org
+  repository: forgejo/runner
+  tag: 13.1.0
+
 runner:
   config:
     create: true
