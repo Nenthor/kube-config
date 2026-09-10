@@ -151,6 +151,45 @@ tlsStore:
       - secretName: wildcard-civtale-de-tls
       # - secretName: wildcard-pillagernews-com-tls
 
+log:
+  format: json
+  level: INFO
+
+# One JSON object per request, on stdout. Grafana Alloy tails the pod, resolves
+# the client IP against a GeoIP database and ships it to Loki - see
+# infrastructure/monitoring. addInternals keeps the requests that never reach a
+# router (http->https redirects, unmatched hosts) in the log; the internal
+# traefik/metrics entrypoints are dropped again on the Alloy side.
+accessLog:
+  enabled: true
+  format: json
+  addInternals: true
+  fields:
+    defaultMode: keep
+    names:
+      StartLocal: drop
+      ClientAddr: drop
+      ClientPort: drop
+      ClientUsername: drop
+      RequestAddr: drop
+      RequestPort: drop
+      ServiceAddr: drop
+      ServiceURL: drop
+      RequestCount: drop
+      GzipRatio: drop
+      Overhead: drop
+      TLSClientSubject: drop
+      TraceId: drop
+      SpanId: drop
+    headers:
+      defaultMode: drop
+      names:
+        User-Agent: keep
+        Referer: keep
+        # Traefik only rewrites ClientHost for entrypoints that trust the hop in
+        # front of them; this keeps the original chain visible either way.
+        X-Forwarded-For: keep
+
 metrics:
   prometheus:
     enabled: true

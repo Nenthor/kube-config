@@ -9,9 +9,29 @@ helmCharts:
     namespace: monitoring
     includeCRDs: true
     valuesFile: values-kps.yaml
+  # Request logging: traefik -> alloy -> loki -> grafana, see docs/logging.md
+  - name: loki
+    repo: oci://ghcr.io/grafana-community/helm-charts/
+    version: 18.12.1
+    releaseName: loki
+    namespace: monitoring
+    includeCRDs: true
+    valuesFile: values-loki.yaml
+    apiVersions:
+      - monitoring.coreos.com/v1
+  - name: alloy
+    repo: https://grafana.github.io/helm-charts
+    version: 1.12.1
+    releaseName: alloy
+    namespace: monitoring
+    includeCRDs: true
+    valuesFile: values-alloy.yaml
+    apiVersions:
+      - monitoring.coreos.com/v1
 
 resources:
   - grafana-admin-credentials.yaml
+  - alloy-geoip-pvc.yaml
   - pvc-alerts.yaml
   - cluster-alerts.yaml
   - edge-alerts.yaml
@@ -20,3 +40,4 @@ resources:
   - grafana-alerting.yaml
   - grafana-contactpoint-secret.yaml
   - grafana-dashboard-homelab.yaml
+  - grafana-dashboard-traefik.yaml

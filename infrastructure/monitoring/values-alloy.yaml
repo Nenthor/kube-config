@@ -1,0 +1,285 @@
+# https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/values.yaml
+
+crds:
+  create: false
+
+global:
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+
+alloy:
+  configMap:
+    content: |
+      logging {
+        level  = "warn"
+        format = "logfmt"
+      }
+
+      // Traefik is the only log source. Every request it serves becomes one JSON
+      // object on stdout; see accessLog in infrastructure/traefik/values.yaml.
+      discovery.kubernetes "traefik" {
+        role = "pod"
+
+        namespaces {
+          names = ["traefik"]
+        }
+
+        selectors {
+          role  = "pod"
+          label = "app.kubernetes.io/name=traefik"
+        }
+      }
+
+      discovery.relabel "traefik" {
+        targets = discovery.kubernetes.traefik.targets
+
+        rule {
+          source_labels = ["__meta_kubernetes_pod_container_name"]
+          regex         = "traefik"
+          action        = "keep"
+        }
+
+        rule {
+          source_labels = ["__meta_kubernetes_namespace"]
+          target_label  = "namespace"
+        }
+
+        rule {
+          source_labels = ["__meta_kubernetes_pod_name"]
+          target_label  = "pod"
+        }
+
+        rule {
+          target_label = "app"
+          replacement  = "traefik"
+        }
+      }
+
+      loki.source.kubernetes "traefik" {
+        targets    = discovery.relabel.traefik.output
+        forward_to = [loki.process.traefik.receiver]
+      }
+
+      loki.process "traefik" {
+        forward_to = [loki.write.loki.receiver]
+
+        // Traefik's own startup/error log shares the same stdout. Only access log
+        // lines carry entryPointName, so tag the rest and leave them unparsed.
+        stage.match {
+          selector = "{app=\"traefik\"} !~ \"entryPointName\""
+
+          stage.static_labels {
+            values = {
+              log_type = "app",
+            }
+          }
+        }
+
+        stage.match {
+          selector = "{app=\"traefik\"} |= \"entryPointName\""
+
+          stage.json {
+            expressions = {
+              entrypoint = "entryPointName",
+              router     = "RouterName",
+              service    = "ServiceName",
+              client_ip  = "ClientHost",
+              host       = "RequestHost",
+              path       = "RequestPath",
+              method     = "RequestMethod",
+              scheme     = "RequestScheme",
+              status     = "DownstreamStatus",
+              start_utc  = "StartUTC",
+              user_agent = "\"request_User-Agent\"",
+            }
+          }
+
+          // Index by when Traefik served the request, not when Alloy read the line.
+          stage.timestamp {
+            source = "start_utc"
+            format = "RFC3339Nano"
+          }
+
+          stage.static_labels {
+            values = {
+              log_type = "access",
+            }
+          }
+
+          // One stream per entrypoint - a handful of values, cheap to index.
+          stage.labels {
+            values = {
+              entrypoint = "entrypoint",
+            }
+          }
+
+          // ClientHost is what Traefik resolved the peer to, so it already honours
+          // the trusted forwarded headers configured on the entrypoint.
+          stage.geoip {
+            source  = "client_ip"
+            db      = "/var/lib/alloy/geoip/dbip-city.mmdb"
+            db_type = "city"
+          }
+
+          // Everything high cardinality goes to structured metadata: filterable in
+          // LogQL, but it never becomes part of the stream index.
+          stage.structured_metadata {
+            values = {
+              client_ip        = "client_ip",
+              host             = "host",
+              path             = "path",
+              method           = "method",
+              scheme           = "scheme",
+              status           = "status",
+              router           = "router",
+              service          = "service",
+              user_agent       = "user_agent",
+              geo_city         = "geoip_city_name",
+              geo_subdivision  = "geoip_subdivision_name",
+              geo_country      = "geoip_country_name",
+              geo_country_code = "geoip_country_code",
+              geo_continent    = "geoip_continent_name",
+              geo_latitude     = "geoip_location_latitude",
+              geo_longitude    = "geoip_location_longitude",
+            }
+          }
+        }
+
+        // Kubelet probes on :8080 and Prometheus scrapes on :9100 are not traffic.
+        stage.match {
+          selector            = "{app=\"traefik\", entrypoint=~\"traefik|metrics\"}"
+          action              = "drop"
+          drop_counter_reason = "traefik_internal_entrypoint"
+        }
+      }
+
+      loki.write "loki" {
+        endpoint {
+          url = "http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push"
+        }
+      }
+
+  storagePath: /var/lib/alloy/data
+
+  mounts:
+    varlog: false
+    dockercontainers: false
+    extra:
+      - name: geoip
+        mountPath: /var/lib/alloy/geoip
+        readOnly: true
+      - name: data
+        mountPath: /var/lib/alloy/data
+      - name: tmp
+        mountPath: /tmp
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ['ALL']
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+controller:
+  # A single replica tails Traefik through the API server - no host mounts, and
+  # the GeoIP database only has to exist once.
+  type: deployment
+  replicas: 1
+  priorityClassName: platform-important
+  # The GeoIP volume is ReadWriteOnce, so the old pod has to go first.
+  updateStrategy:
+    type: Recreate
+
+  initContainers:
+    - name: geoip-download
+      image: alpine:3.24
+      command: ['/bin/sh', '-c']
+      args:
+        - |
+          set -eu
+
+          DB=/geoip/dbip-city.mmdb
+
+          # DB-IP publishes one lite build per month; refreshed on pod restart.
+          if [ -f "$DB" ] && [ -z "$(find "$DB" -mtime +25)" ]; then
+            echo "geoip database is less than a month old, skipping download"
+            exit 0
+          fi
+
+          year=$(date -u +%Y)
+          month=$(date -u +%m)
+          prev_year=$year
+          prev_month=$((${month#0} - 1))
+          if [ "$prev_month" -eq 0 ]; then
+            prev_year=$((year - 1))
+            prev_month=12
+          fi
+          prev_month=$(printf '%02d' "$prev_month")
+
+          # This month's build appears a few days late, so fall back to last month's.
+          for build in "$year-$month" "$prev_year-$prev_month"; do
+            echo "downloading dbip-city-lite-$build"
+            if wget -q -O "$DB.gz" "https://download.db-ip.com/free/dbip-city-lite-$build.mmdb.gz"; then
+              gunzip -c "$DB.gz" > "$DB.tmp"
+              mv "$DB.tmp" "$DB"
+              rm -f "$DB.gz"
+              echo "geoip database updated to $build"
+              exit 0
+            fi
+          done
+
+          rm -f "$DB.gz" "$DB.tmp"
+
+          if [ -f "$DB" ]; then
+            echo "download failed, keeping the existing database" >&2
+            exit 0
+          fi
+
+          echo "no geoip database available - loki.process cannot start without one" >&2
+          exit 1
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: ['ALL']
+      resources:
+        requests:
+          cpu: 50m
+          memory: 32Mi
+        limits:
+          cpu: 500m
+          memory: 128Mi
+      volumeMounts:
+        - name: geoip
+          mountPath: /geoip
+
+  volumes:
+    extra:
+      - name: geoip
+        persistentVolumeClaim:
+          claimName: alloy-geoip
+      - name: data
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
+
+rbac:
+  # Alloy only ever reads Traefik pods and their logs.
+  namespaces:
+    - traefik
+  rules:
+    - apiGroups: ['']
+      resources: ['pods', 'pods/log']
+      verbs: ['get', 'list', 'watch']
+  clusterRules: []
+
+serviceMonitor:
+  enabled: true

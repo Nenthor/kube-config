@@ -1,0 +1,17 @@
+# Holds the DB-IP City Lite database that Alloy resolves client IPs against.
+# Kept on a volume so a failed refresh falls back to the previous month's build
+# instead of leaving Alloy without a database.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: alloy-geoip
+  namespace: monitoring
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 1Gi
