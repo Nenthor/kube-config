@@ -9,6 +9,8 @@ controller:
       memory: 128Mi
 
 speaker:
+  frr:
+    enabled: false
   priorityClassName: infra-critical
   resources:
     requests:
@@ -17,3 +19,6 @@ speaker:
     limits:
       cpu: 100m
       memory: 128Mi
+
+frrk8s:
+  enabled: false
