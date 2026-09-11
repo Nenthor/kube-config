@@ -22,6 +22,12 @@ spec:
       containers:
         - name: redis
           image: redis:8.8.1-alpine
+          args:
+            - redis-server
+            - --save
+            - ''
+            - --appendonly
+            - 'no'
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
