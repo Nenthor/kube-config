@@ -8,6 +8,10 @@ defaultRules:
 grafana:
   enabled: true
 
+  grafana.ini:
+    plugins:
+      preinstall_auto_update: false
+
   admin:
     existingSecret: 'grafana-admin-credentials'
     userKey: 'admin-user'
@@ -50,7 +54,7 @@ grafana:
       memory: 256Mi
     limits:
       cpu: 500m
-      memory: 512Mi
+      memory: 1Gi
   persistence:
     enabled: true
     storageClassName: local-path

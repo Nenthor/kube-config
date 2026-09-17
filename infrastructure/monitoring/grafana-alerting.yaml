@@ -47,7 +47,7 @@ data:
             condition: B
             for: 10m
             noDataState: OK
-            execErrState: Alerting
+            execErrState: Error
             labels:
               severity: critical
             annotations:
@@ -84,7 +84,7 @@ data:
             condition: B
             for: 15m
             noDataState: OK
-            execErrState: Alerting
+            execErrState: Error
             labels:
               severity: warning
             annotations:
@@ -121,7 +121,7 @@ data:
             condition: B
             for: 1m
             noDataState: OK
-            execErrState: Alerting
+            execErrState: Error
             labels:
               severity: warning
             annotations:
@@ -158,7 +158,7 @@ data:
             condition: B
             for: 10m
             noDataState: OK
-            execErrState: Alerting
+            execErrState: Error
             labels:
               severity: warning
             annotations:
@@ -195,7 +195,7 @@ data:
             condition: B
             for: 1h
             noDataState: OK
-            execErrState: Alerting
+            execErrState: Error
             labels:
               severity: critical
             annotations:
@@ -232,7 +232,7 @@ data:
             condition: B
             for: 5m
             noDataState: OK
-            execErrState: Alerting
+            execErrState: Error
             labels:
               severity: critical
             annotations:
@@ -269,7 +269,7 @@ data:
             condition: B
             for: 30m
             noDataState: OK
-            execErrState: Alerting
+            execErrState: Error
             labels:
               severity: warning
             annotations:
@@ -306,7 +306,7 @@ data:
             condition: B
             for: 15m
             noDataState: OK
-            execErrState: Alerting
+            execErrState: Error
             labels:
               severity: warning
             annotations:
