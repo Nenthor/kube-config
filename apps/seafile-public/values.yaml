@@ -1,7 +1,7 @@
 # https://raw.githubusercontent.com/haiwen/seafile-helm-chart/refs/heads/main/values/13.0/ce.yaml
 
 seafile:
-  initMode: true
+  initMode: false
   existingSecret:
     name: seafile-secret
 
