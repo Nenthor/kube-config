@@ -21,7 +21,7 @@ seafile:
     SEAFILE_SERVER_PROTOCOL: 'https'
 
     # for database
-    SEAFILE_MYSQL_DB_HOST: 'mariadb'
+    SEAFILE_MYSQL_DB_HOST: 'mariadb.seafile.svc.cluster.local'
     SEAFILE_MYSQL_DB_PORT: '3306'
     SEAFILE_MYSQL_DB_USER: 'seafile'
     SEAFILE_MYSQL_DB_CCNET_DB_NAME: 'ccnet_db'
