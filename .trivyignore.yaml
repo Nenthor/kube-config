@@ -3,6 +3,7 @@ misconfigurations:
     paths:
       - infrastructure_cert-manager.yaml
       - infrastructure_cnpg-operator.yaml
+      - infrastructure_mariadb-operator.yaml
       - infrastructure_monitoring.yaml
       - infrastructure_traefik.yaml
     statement: Operator needs Secrets access to function (cert issuance / DB credentials / Alertmanager config / TLS store).
@@ -11,6 +12,7 @@ misconfigurations:
     paths:
       - infrastructure_cert-manager.yaml
       - infrastructure_cnpg-operator.yaml
+      - infrastructure_mariadb-operator.yaml
       - infrastructure_monitoring.yaml
     statement: Operator provisions Services/Ingresses for the resources it manages (ACME challenges, Postgres clusters, Alertmanager).
 
@@ -18,6 +20,7 @@ misconfigurations:
     paths:
       - infrastructure_cert-manager.yaml
       - infrastructure_cnpg-operator.yaml
+      - infrastructure_mariadb-operator.yaml
       - infrastructure_metallb.yaml
       - infrastructure_monitoring.yaml
     statement: Operator owns and updates its own CRD admission webhooks.
@@ -31,6 +34,11 @@ misconfigurations:
     paths:
       - infrastructure_monitoring.yaml
     statement: Prometheus Operator needs full verbs on its own CRDs to reconcile them.
+
+  - id: AVD-KSV-0046
+    paths:
+      - infrastructure_mariadb-operator.yaml
+    statement: Aggregate view/edit roles use '*' only within the k8s.mariadb.com API group, not cluster-wide.
 
   - id: AVD-KSV-0009
     paths:
@@ -64,6 +72,8 @@ misconfigurations:
       - apps_forgejo.yaml
       - apps_homepage.yaml
       - apps_portfolio.yaml
+      - apps_seafile.yaml
+      - apps_seafile-public.yaml
       - apps_stirling-pdf.yaml
       - infrastructure_crowdsec.yaml
       - infrastructure_metallb.yaml
@@ -74,6 +84,8 @@ misconfigurations:
     paths:
       - apps_forgejo.yaml
       - apps_open-webui.yaml
+      - apps_seafile.yaml
+      - apps_seafile-public.yaml
       - infrastructure_metallb.yaml
     statement: Same containers as AVD-KSV-0014 above - vendored chart defaults, not overridden pending verification.
 
