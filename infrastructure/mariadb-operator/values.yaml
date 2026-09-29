@@ -1,0 +1,17 @@
+# https://github.com/mariadb-operator/mariadb-operator/blob/b04f95f3af57b8e076948f637186683efb09c7ed/deploy/charts/mariadb-operator/values.yaml
+
+crds:
+  enabled: true
+
+metrics:
+  enabled: false
+
+priorityClassName: platform-important
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 10m
+    memory: 32Mi
