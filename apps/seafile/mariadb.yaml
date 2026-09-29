@@ -2,6 +2,8 @@ apiVersion: k8s.mariadb.com/v1alpha1
 kind: MariaDB
 metadata:
   name: mariadb
+  annotations:
+    argocd.argoproj.io/sync-wave: '-1'
 spec:
   image: mariadb:10.11.18
   replicas: 1
