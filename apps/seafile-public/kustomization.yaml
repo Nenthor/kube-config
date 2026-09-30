@@ -21,4 +21,4 @@ images:
   - name: redis
     newTag: 8.10.2-alpine
   - name: mariadb
-    newTag: 10.11.19
+    newTag: 13.0.2
