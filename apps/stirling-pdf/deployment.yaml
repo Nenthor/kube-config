@@ -49,6 +49,8 @@ spec:
               name: stirling-pdf-tmp
             - mountPath: /home/stirlingpdfuser
               name: stirling-pdf-home
+            - mountPath: /var/lib/libreoffice-sandbox
+              name: stirling-pdf-var-libreoffice
       volumes:
         - name: stirling-pdf-data
           persistentVolumeClaim:
@@ -56,4 +58,6 @@ spec:
         - name: stirling-pdf-tmp
           emptyDir: {}
         - name: stirling-pdf-home
+          emptyDir: {}
+        - name: stirling-pdf-var-libreoffice
           emptyDir: {}
