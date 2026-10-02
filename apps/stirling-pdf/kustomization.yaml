@@ -8,4 +8,4 @@ resources:
   - pvc.yaml
 images:
   - name: stirlingtools/stirling-pdf
-    newTag: 3.0.0
+    newTag: 3.0.2
