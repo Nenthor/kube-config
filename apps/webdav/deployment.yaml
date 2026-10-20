@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webdav-app
+  namespace: webdav
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: webdav-app
+  template:
+    metadata:
+      labels:
+        app: webdav-app
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: webdav-container
+          image: rclone/rclone:1.75.2
+          args:
+            - serve
+            - webdav
+            - /data
+            - --addr=:8080
+            - --config=
+            - --cache-dir=/tmp/rclone
+            - --use-json-log
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ['ALL']
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: webdav-credentials
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+          volumeMounts:
+            - mountPath: /data
+              name: webdav-data
+            - mountPath: /tmp
+              name: tmp
+      volumes:
+        - name: webdav-data
+          persistentVolumeClaim:
+            claimName: webdav-pvc
+        - name: tmp
+          emptyDir: {}

@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: webdav-isolation
+  namespace: webdav
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  podSelector:
+    matchLabels:
+      app: webdav-app
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: traefik
+      ports:
+        - protocol: TCP
+          port: 8080
+  # Serves files only: no outbound traffic needed.
+  egress: []

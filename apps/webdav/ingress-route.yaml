@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: webdav-route
+  namespace: webdav
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  entryPoints:
+    - ws-home
+  routes:
+    - kind: Rule
+      match: Host(`webdav.home.nentwich.dev`)
+      services:
+        - name: webdav-service
+          port: 80
+  tls: {}
