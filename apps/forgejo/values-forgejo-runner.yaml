@@ -25,7 +25,7 @@ runner:
           DOCKER_TLS_VERIFY: 1
           DOCKER_CERT_PATH: /certs/client
         labels:
-          - 'ubuntu-latest:docker://catthehacker/ubuntu:act-24.04-20260815'
+          - 'ubuntu-latest:docker://git.nentwich.dev/nentwich/runner:sha-e43e473'
 
       container:
         network: bridge
