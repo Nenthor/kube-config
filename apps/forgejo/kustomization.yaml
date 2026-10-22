@@ -9,17 +9,6 @@ helmCharts:
     namespace: forgejo
     valuesFile: values-forgejo.yaml
 
-  - name: forgejo-runner
-    repo: oci://codeberg.org/wrenix/helm-charts
-    version: 0.7.6
-    releaseName: forgejo-runner
-    namespace: forgejo
-    valuesFile: values-forgejo-runner.yaml
-
 resources:
   - db-secret.yaml
-  - runner-init-secret.yaml
-  - pvc-cache.yaml
   - ingress-route-middleware.yaml
-  - runner-networkpolicy.yaml
-  - dind-daemon-config.yaml
