@@ -5,7 +5,7 @@ knownLastVersion: true
 image:
   registry: code.forgejo.org
   repository: forgejo/runner
-  tag: 13.1.0
+  tag: 13.2.0
 
 runner:
   config:
