@@ -55,7 +55,7 @@ ports:
       aliasHeadersStrategy: delete
       # https://doc.traefik.io/traefik/v3.7/migrate/v3/#encoded-characters-configuration-default-values
       encodedCharacters:
-        allowEncodedSlash: false
+        allowEncodedSlash: true
         allowEncodedBackSlash: false
         allowEncodedNullCharacter: false
         allowEncodedSemicolon: false
