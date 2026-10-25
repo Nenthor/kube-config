@@ -13,3 +13,4 @@ resources:
   - db-secret.yaml
   - kek-secret.yaml
   - ingress-route-middleware.yaml
+  - ingress-route.yaml

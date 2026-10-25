@@ -44,11 +44,4 @@ frontend:
       memory: 128Mi
 
 ingress:
-  enabled: true
-  ingressClassName: traefik
-  hostname: dependencies.home.nentwich.dev
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: ws-home
-    traefik.ingress.kubernetes.io/router.tls: 'true'
-    traefik.ingress.kubernetes.io/router.middlewares: dependency-track-csp-header@kubernetescrd
-  tls: []
+  enabled: false
