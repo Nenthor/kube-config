@@ -41,3 +41,14 @@ spec:
   owner: open-webui
   cluster:
     name: postgres
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: dependency-track-db
+  namespace: cnpg-database
+spec:
+  name: dependency-track
+  owner: dependency-track
+  cluster:
+    name: postgres
