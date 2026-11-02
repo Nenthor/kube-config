@@ -8,4 +8,4 @@ resources:
   - agent-credentials-secret.yaml
 images:
   - name: crowdsecurity/crowdsec
-    newTag: v1.8.1
+    newTag: v1.8.2
