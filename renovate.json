@@ -39,6 +39,12 @@
       "matchUpdateTypes": ["minor"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true
+    },
+    {
+      "description": "Disable automerge for Argo CD for minor and major updates.",
+      "matchPackageNames": ["/argoproj/argo-cd/"],
+      "matchUpdateTypes": ["minor", "major"],
+      "automerge": false
     }
   ]
 }
