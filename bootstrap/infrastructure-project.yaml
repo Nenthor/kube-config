@@ -35,6 +35,8 @@ spec:
       kind: '*'
     - group: 'policy'
       kind: '*'
+    - group: 'aquasecurity.github.io'
+      kind: '*'
   orphanedResources:
     warn: true
     ignore:

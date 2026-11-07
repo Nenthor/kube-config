@@ -6,7 +6,8 @@ misconfigurations:
       - infrastructure_mariadb-operator.yaml
       - infrastructure_monitoring.yaml
       - infrastructure_traefik.yaml
-    statement: Operator needs Secrets access to function (cert issuance / DB credentials / Alertmanager config / TLS store).
+      - infrastructure_trivy-operator.yaml
+    statement: Operator needs Secrets access to function (cert issuance / DB credentials / Alertmanager config / TLS store / registry pull secrets for image scans).
 
   - id: AVD-KSV-0056
     paths:
@@ -87,3 +88,12 @@ misconfigurations:
     paths:
       - apps_forgejo.yaml
     statement: forgejo-runner's dind container needs `privileged` for Docker-in-Docker; this is inherent to running a self-hosted CI runner.
+
+  - id: AVD-KSV-0047
+    paths:
+      - infrastructure_trivy-operator.yaml
+    statement: trivy-operator needs read-only nodes/proxy (kubelet API) for its node infra assessment and CIS/NSA compliance reports.
+  - id: AVD-KSV-0109
+    paths:
+      - infrastructure_trivy-operator.yaml
+    statement: False positive - trivy-operator-config only holds feature flags whose key names contain "SECRET".

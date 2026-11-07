@@ -191,7 +191,7 @@ kube-state-metrics:
     monitor:
       metricRelabelings:
         - sourceLabels: [__name__]
-          regex: 'kube_pod_container_status_(restarts_total|last_terminated_reason|waiting_reason|ready)|kube_pod_container_resource_(limits|requests)|kube_pod_status_(phase|ready)|kube_deployment_status_replicas_(available|unavailable)|kube_deployment_spec_replicas|kube_statefulset_status_replicas_ready|kube_statefulset_replicas|kube_daemonset_status_number_(ready|unavailable)|kube_daemonset_status_desired_number_scheduled|kube_node_status_condition|kube_node_spec_unschedulable|kube_persistentvolumeclaim_status_phase|kube_job_status_failed|kube_job_failed'
+          regex: 'kube_pod_container_status_(restarts_total|last_terminated_reason|waiting_reason|ready)|kube_pod_container_resource_(limits|requests)|kube_pod_status_(phase|ready)|kube_pod_info|kube_deployment_status_replicas_(available|unavailable)|kube_deployment_spec_replicas|kube_statefulset_status_replicas_ready|kube_statefulset_replicas|kube_daemonset_status_number_(ready|unavailable)|kube_daemonset_status_desired_number_scheduled|kube_node_status_condition|kube_node_spec_unschedulable|kube_persistentvolumeclaim_status_phase|kube_job_status_failed|kube_job_failed'
           action: keep
 
 prometheusOperator:
