@@ -61,6 +61,11 @@
       "description": "git.nentwich.dev images are owned by argocd-image-updater",
       "matchPackageNames": ["git.nentwich.dev/**"],
       "enabled": false
+    },
+    {
+      "description": "The Forgejo chart appends -rootless after the tag, so a digest inside the tag breaks the image reference",
+      "matchPackageNames": ["code.forgejo.org/forgejo/forgejo"],
+      "pinDigests": false
     }
   ]
 }
