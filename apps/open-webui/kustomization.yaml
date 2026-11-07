@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
   - name: open-webui
     repo: https://helm.openwebui.com/
-    version: 17.0.0
+    version: 18.0.0
     releaseName: open-webui
     namespace: open-webui
     valuesFile: values.yaml
