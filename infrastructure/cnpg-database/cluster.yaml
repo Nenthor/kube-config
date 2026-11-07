@@ -61,11 +61,3 @@ spec:
         connectionLimit: -1
         passwordSecret:
           name: open-webui-db-credentials
-
-      - name: dependency-track
-        ensure: present
-        login: true
-        inherit: true
-        connectionLimit: -1
-        passwordSecret:
-          name: dependency-track-db-credentials

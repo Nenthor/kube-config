@@ -71,7 +71,6 @@ misconfigurations:
       - apps_forgejo.yaml
       - apps_homepage.yaml
       - apps_portfolio.yaml
-      - apps_dependency-track.yaml
       - infrastructure_crowdsec.yaml
       - infrastructure_metallb.yaml
       - infrastructure_monitoring.yaml
