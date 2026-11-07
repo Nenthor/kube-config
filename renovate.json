@@ -66,6 +66,11 @@
       "description": "The Forgejo chart appends -rootless after the tag, so a digest inside the tag breaks the image reference",
       "matchPackageNames": ["code.forgejo.org/forgejo/forgejo"],
       "pinDigests": false
+    },
+    {
+      "description": "Semver pre-releases (beta38 → rc.2 → 1.0.0), not Docker compatibility suffixes",
+      "matchPackageNames": ["ghcr.io/pelican/panel"],
+      "versioning": "semver"
     }
   ]
 }
