@@ -9,6 +9,8 @@
 
   "minimumReleaseAge": "3 days",
   "platformAutomerge": false,
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
 
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
