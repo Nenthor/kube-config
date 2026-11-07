@@ -11,7 +11,7 @@ helmCharts:
     valuesFile: values-kps.yaml
   - name: loki
     repo: oci://ghcr.io/grafana-community/helm-charts/
-    version: 19.0.3
+    version: 21.0.0
     releaseName: loki
     namespace: monitoring
     includeCRDs: true
