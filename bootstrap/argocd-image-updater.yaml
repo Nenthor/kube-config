@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/argoproj-labs/argocd-image-updater.git
-    targetRevision: HEAD
+    targetRevision: v1.4.0
     path: config/default
     kustomize:
       patches:

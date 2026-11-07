@@ -21,6 +21,11 @@
     "managerFilePatterns": ["/(^|/)values-.+\\.ya?ml$/"]
   },
 
+  "argocd": {
+    "description": "Scan Argo CD Applications",
+    "managerFilePatterns": ["/^bootstrap/.+\\.ya?ml$/"]
+  },
+
   "hostRules": [
     {
       "matchHost": "docker.io",
