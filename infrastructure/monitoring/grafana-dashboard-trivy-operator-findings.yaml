@@ -1,0 +1,1411 @@
+# Every individual Trivy Operator finding and where it is, from the *_info
+# metrics enabled in infrastructure/trivy-operator/values.yaml. The upstream
+# Trivy dashboards next to this one only show counts.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-trivy-operator-findings
+  namespace: monitoring
+  labels:
+    grafana_dashboard: '1'
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+data:
+  trivy-operator-findings.json: |
+    {
+      "uid": "trivy-findings",
+      "title": "Trivy Operator - Findings",
+      "description": "Every individual Trivy Operator finding and where it is, from the *_info metrics. Counts and trends live in the two upstream Trivy dashboards.",
+      "tags": [
+        "homelab",
+        "trivy",
+        "security"
+      ],
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "refresh": "5m",
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
+      "links": [
+        {
+          "title": "Trivy dashboards",
+          "type": "dashboards",
+          "tags": [
+            "trivy"
+          ],
+          "asDropdown": true,
+          "includeVars": false,
+          "keepTime": true
+        }
+      ],
+      "templating": {
+        "list": [
+          {
+            "name": "namespace",
+            "label": "Namespace",
+            "type": "query",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "definition": "label_values(trivy_image_vulnerabilities, namespace)",
+            "query": {
+              "qryType": 1,
+              "query": "label_values(trivy_image_vulnerabilities, namespace)",
+              "refId": "PrometheusVariableQueryEditor-VariableQuery"
+            },
+            "refresh": 2,
+            "sort": 1,
+            "multi": true,
+            "includeAll": true,
+            "allValue": ".*",
+            "current": {
+              "text": [
+                "All"
+              ],
+              "value": [
+                "$__all"
+              ]
+            }
+          },
+          {
+            "name": "severity",
+            "label": "Severity",
+            "type": "custom",
+            "query": "Critical,High,Medium,Low,Unknown",
+            "multi": true,
+            "includeAll": true,
+            "allValue": ".*",
+            "current": {
+              "text": [
+                "All"
+              ],
+              "value": [
+                "$__all"
+              ]
+            }
+          }
+        ]
+      },
+      "panels": [
+        {
+          "type": "row",
+          "title": "Images",
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "panels": []
+        },
+        {
+          "type": "table",
+          "title": "Exposed secrets",
+          "description": "Secrets found inside container image files. File is the path inside the image.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 1
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Severity"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "Critical": {
+                            "color": "dark-red",
+                            "index": 0
+                          },
+                          "High": {
+                            "color": "red",
+                            "index": 1
+                          },
+                          "Medium": {
+                            "color": "orange",
+                            "index": 2
+                          },
+                          "Low": {
+                            "color": "yellow",
+                            "index": 3
+                          },
+                          "Unknown": {
+                            "color": "text",
+                            "index": 4
+                          },
+                          "CRITICAL": {
+                            "text": "Critical",
+                            "color": "dark-red",
+                            "index": 5
+                          },
+                          "HIGH": {
+                            "text": "High",
+                            "color": "red",
+                            "index": 6
+                          },
+                          "MEDIUM": {
+                            "text": "Medium",
+                            "color": "orange",
+                            "index": 7
+                          },
+                          "LOW": {
+                            "text": "Low",
+                            "color": "yellow",
+                            "index": 8
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "sortBy": [
+              {
+                "displayName": "Severity",
+                "desc": false
+              }
+            ]
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true
+                },
+                "renameByName": {
+                  "severity": "Severity",
+                  "namespace": "Namespace",
+                  "resource_kind": "Kind",
+                  "resource_name": "Resource",
+                  "container_name": "Container",
+                  "image": "Image",
+                  "secret_target": "File",
+                  "secret_rule_id": "Rule",
+                  "secret_title": "Title",
+                  "secret_category": "Category"
+                },
+                "indexByName": {
+                  "severity": 0,
+                  "namespace": 1,
+                  "resource_kind": 2,
+                  "resource_name": 3,
+                  "container_name": 4,
+                  "image": 5,
+                  "secret_target": 6,
+                  "secret_rule_id": 7,
+                  "secret_title": 8,
+                  "secret_category": 9
+                }
+              }
+            }
+          ],
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "max by (severity, namespace, resource_kind, resource_name, container_name, image, secret_target, secret_rule_id, secret_title, secret_category) (label_join(label_join(trivy_exposedsecrets_info{namespace=~\"$namespace\", severity=~\"$severity\"}, \"image\", \"/\", \"image_registry\", \"image_repository\"), \"image\", \":\", \"image\", \"image_tag\"))",
+              "format": "table",
+              "instant": true,
+              "range": false
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Vulnerabilities (Critical and High)",
+          "description": "One row per CVE per container. Medium and below are only counted, see the Trivy Operator - Vulnerabilities dashboard. Click an ID for its OSV advisory.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Severity"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "Critical": {
+                            "color": "dark-red",
+                            "index": 0
+                          },
+                          "High": {
+                            "color": "red",
+                            "index": 1
+                          },
+                          "Medium": {
+                            "color": "orange",
+                            "index": 2
+                          },
+                          "Low": {
+                            "color": "yellow",
+                            "index": 3
+                          },
+                          "Unknown": {
+                            "color": "text",
+                            "index": 4
+                          },
+                          "CRITICAL": {
+                            "text": "Critical",
+                            "color": "dark-red",
+                            "index": 5
+                          },
+                          "HIGH": {
+                            "text": "High",
+                            "color": "red",
+                            "index": 6
+                          },
+                          "MEDIUM": {
+                            "text": "Medium",
+                            "color": "orange",
+                            "index": 7
+                          },
+                          "LOW": {
+                            "text": "Low",
+                            "color": "yellow",
+                            "index": 8
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Score"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 70
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "ID"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "Open advisory",
+                        "url": "https://osv.dev/vulnerability/${__value.raw}",
+                        "targetBlank": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "sortBy": [
+              {
+                "displayName": "Score",
+                "desc": true
+              }
+            ]
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true
+                },
+                "renameByName": {
+                  "severity": "Severity",
+                  "vuln_score": "Score",
+                  "vuln_id": "ID",
+                  "namespace": "Namespace",
+                  "resource_name": "Resource",
+                  "container_name": "Container",
+                  "image": "Image",
+                  "resource": "Package",
+                  "installed_version": "Installed",
+                  "fixed_version": "Fixed in",
+                  "vuln_title": "Title",
+                  "target": "Target",
+                  "pkg_path": "Path",
+                  "class": "Class"
+                },
+                "indexByName": {
+                  "severity": 0,
+                  "vuln_score": 1,
+                  "vuln_id": 2,
+                  "namespace": 3,
+                  "resource_name": 4,
+                  "container_name": 5,
+                  "image": 6,
+                  "resource": 7,
+                  "installed_version": 8,
+                  "fixed_version": 9,
+                  "vuln_title": 10,
+                  "target": 11,
+                  "pkg_path": 12,
+                  "class": 13
+                }
+              }
+            }
+          ],
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "max by (severity, vuln_score, vuln_id, namespace, resource_name, container_name, image, resource, installed_version, fixed_version, vuln_title, target, pkg_path, class) (label_join(label_join(trivy_vulnerability_id{namespace=~\"$namespace\", severity=~\"$severity\"}, \"image\", \"/\", \"image_registry\", \"image_repository\"), \"image\", \":\", \"image\", \"image_tag\"))",
+              "format": "table",
+              "instant": true,
+              "range": false
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Container images",
+          "description": "Base OS of every scanned image. EOSL means the OS release no longer gets security updates.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 20
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Severity"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "Critical": {
+                            "color": "dark-red",
+                            "index": 0
+                          },
+                          "High": {
+                            "color": "red",
+                            "index": 1
+                          },
+                          "Medium": {
+                            "color": "orange",
+                            "index": 2
+                          },
+                          "Low": {
+                            "color": "yellow",
+                            "index": 3
+                          },
+                          "Unknown": {
+                            "color": "text",
+                            "index": 4
+                          },
+                          "CRITICAL": {
+                            "text": "Critical",
+                            "color": "dark-red",
+                            "index": 5
+                          },
+                          "HIGH": {
+                            "text": "High",
+                            "color": "red",
+                            "index": 6
+                          },
+                          "MEDIUM": {
+                            "text": "Medium",
+                            "color": "orange",
+                            "index": 7
+                          },
+                          "LOW": {
+                            "text": "Low",
+                            "color": "yellow",
+                            "index": 8
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "EOSL"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "true": {
+                            "text": "EOSL",
+                            "color": "red",
+                            "index": 0
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "sortBy": [
+              {
+                "displayName": "EOSL",
+                "desc": true
+              }
+            ]
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true
+                },
+                "renameByName": {
+                  "image_os_eosl": "EOSL",
+                  "namespace": "Namespace",
+                  "resource_kind": "Kind",
+                  "resource_name": "Resource",
+                  "container_name": "Container",
+                  "image": "Image",
+                  "image_os_family": "OS",
+                  "image_os_name": "OS version"
+                },
+                "indexByName": {
+                  "image_os_eosl": 0,
+                  "namespace": 1,
+                  "resource_kind": 2,
+                  "resource_name": 3,
+                  "container_name": 4,
+                  "image": 5,
+                  "image_os_family": 6,
+                  "image_os_name": 7
+                }
+              }
+            }
+          ],
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "max by (image_os_eosl, namespace, resource_kind, resource_name, container_name, image, image_os_family, image_os_name) (label_join(label_join(trivy_image_info{namespace=~\"$namespace\"}, \"image\", \"/\", \"image_registry\", \"image_repository\"), \"image\", \":\", \"image\", \"image_tag\"))",
+              "format": "table",
+              "instant": true,
+              "range": false
+            }
+          ]
+        },
+        {
+          "type": "row",
+          "title": "Kubernetes resources",
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 28
+          },
+          "panels": []
+        },
+        {
+          "type": "table",
+          "title": "Misconfigurations",
+          "description": "Failed configuration checks on workloads and other resources. Look up an ID at avd.aquasec.com.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 29
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Severity"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "Critical": {
+                            "color": "dark-red",
+                            "index": 0
+                          },
+                          "High": {
+                            "color": "red",
+                            "index": 1
+                          },
+                          "Medium": {
+                            "color": "orange",
+                            "index": 2
+                          },
+                          "Low": {
+                            "color": "yellow",
+                            "index": 3
+                          },
+                          "Unknown": {
+                            "color": "text",
+                            "index": 4
+                          },
+                          "CRITICAL": {
+                            "text": "Critical",
+                            "color": "dark-red",
+                            "index": 5
+                          },
+                          "HIGH": {
+                            "text": "High",
+                            "color": "red",
+                            "index": 6
+                          },
+                          "MEDIUM": {
+                            "text": "Medium",
+                            "color": "orange",
+                            "index": 7
+                          },
+                          "LOW": {
+                            "text": "Low",
+                            "color": "yellow",
+                            "index": 8
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "ID"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 100
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "sortBy": [
+              {
+                "displayName": "Severity",
+                "desc": false
+              }
+            ]
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true
+                },
+                "renameByName": {
+                  "severity": "Severity",
+                  "namespace": "Namespace",
+                  "resource_kind": "Kind",
+                  "resource_name": "Resource",
+                  "config_audit_id": "ID",
+                  "config_audit_title": "Check",
+                  "config_audit_category": "Category",
+                  "config_audit_description": "Description"
+                },
+                "indexByName": {
+                  "severity": 0,
+                  "namespace": 1,
+                  "resource_kind": 2,
+                  "resource_name": 3,
+                  "config_audit_id": 4,
+                  "config_audit_title": 5,
+                  "config_audit_category": 6,
+                  "config_audit_description": 7
+                }
+              }
+            }
+          ],
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "max by (severity, namespace, resource_kind, resource_name, config_audit_id, config_audit_title, config_audit_category, config_audit_description) (trivy_configaudits_info{namespace=~\"$namespace\", severity=~\"$severity\", config_audit_success=\"false\"})",
+              "format": "table",
+              "instant": true,
+              "range": false
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "RBAC assessments",
+          "description": "Failed checks on namespaced Roles. ClusterRoles are only counted, see the Trivy Operator Dashboard.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 41
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Severity"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "Critical": {
+                            "color": "dark-red",
+                            "index": 0
+                          },
+                          "High": {
+                            "color": "red",
+                            "index": 1
+                          },
+                          "Medium": {
+                            "color": "orange",
+                            "index": 2
+                          },
+                          "Low": {
+                            "color": "yellow",
+                            "index": 3
+                          },
+                          "Unknown": {
+                            "color": "text",
+                            "index": 4
+                          },
+                          "CRITICAL": {
+                            "text": "Critical",
+                            "color": "dark-red",
+                            "index": 5
+                          },
+                          "HIGH": {
+                            "text": "High",
+                            "color": "red",
+                            "index": 6
+                          },
+                          "MEDIUM": {
+                            "text": "Medium",
+                            "color": "orange",
+                            "index": 7
+                          },
+                          "LOW": {
+                            "text": "Low",
+                            "color": "yellow",
+                            "index": 8
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "ID"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 100
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "sortBy": [
+              {
+                "displayName": "Severity",
+                "desc": false
+              }
+            ]
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true
+                },
+                "renameByName": {
+                  "severity": "Severity",
+                  "namespace": "Namespace",
+                  "resource_kind": "Kind",
+                  "resource_name": "Resource",
+                  "rbac_assessment_id": "ID",
+                  "rbac_assessment_title": "Check",
+                  "rbac_assessment_category": "Category",
+                  "rbac_assessment_description": "Description"
+                },
+                "indexByName": {
+                  "severity": 0,
+                  "namespace": 1,
+                  "resource_kind": 2,
+                  "resource_name": 3,
+                  "rbac_assessment_id": 4,
+                  "rbac_assessment_title": 5,
+                  "rbac_assessment_category": 6,
+                  "rbac_assessment_description": 7
+                }
+              }
+            }
+          ],
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "max by (severity, namespace, resource_kind, resource_name, rbac_assessment_id, rbac_assessment_title, rbac_assessment_category, rbac_assessment_description) (trivy_rbacassessments_info{namespace=~\"$namespace\", severity=~\"$severity\", rbac_assessment_success=\"false\"})",
+              "format": "table",
+              "instant": true,
+              "range": false
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Infra assessments",
+          "description": "Failed checks on node and control plane components.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 49
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Severity"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "Critical": {
+                            "color": "dark-red",
+                            "index": 0
+                          },
+                          "High": {
+                            "color": "red",
+                            "index": 1
+                          },
+                          "Medium": {
+                            "color": "orange",
+                            "index": 2
+                          },
+                          "Low": {
+                            "color": "yellow",
+                            "index": 3
+                          },
+                          "Unknown": {
+                            "color": "text",
+                            "index": 4
+                          },
+                          "CRITICAL": {
+                            "text": "Critical",
+                            "color": "dark-red",
+                            "index": 5
+                          },
+                          "HIGH": {
+                            "text": "High",
+                            "color": "red",
+                            "index": 6
+                          },
+                          "MEDIUM": {
+                            "text": "Medium",
+                            "color": "orange",
+                            "index": 7
+                          },
+                          "LOW": {
+                            "text": "Low",
+                            "color": "yellow",
+                            "index": 8
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "ID"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 100
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "sortBy": [
+              {
+                "displayName": "Severity",
+                "desc": false
+              }
+            ]
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true
+                },
+                "renameByName": {
+                  "severity": "Severity",
+                  "namespace": "Namespace",
+                  "resource_kind": "Kind",
+                  "resource_name": "Resource",
+                  "infra_assessment_id": "ID",
+                  "infra_assessment_title": "Check",
+                  "infra_assessment_category": "Category",
+                  "infra_assessment_description": "Description"
+                },
+                "indexByName": {
+                  "severity": 0,
+                  "namespace": 1,
+                  "resource_kind": 2,
+                  "resource_name": 3,
+                  "infra_assessment_id": 4,
+                  "infra_assessment_title": 5,
+                  "infra_assessment_category": 6,
+                  "infra_assessment_description": 7
+                }
+              }
+            }
+          ],
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "max by (severity, namespace, resource_kind, resource_name, infra_assessment_id, infra_assessment_title, infra_assessment_category, infra_assessment_description) (trivy_infraassessments_info{namespace=~\"$namespace\", severity=~\"$severity\", infra_assessment_success=\"false\"})",
+              "format": "table",
+              "instant": true,
+              "range": false
+            }
+          ]
+        },
+        {
+          "type": "row",
+          "title": "Cluster compliance",
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 57
+          },
+          "panels": []
+        },
+        {
+          "type": "bargauge",
+          "title": "Failed controls per benchmark",
+          "description": "Share of failed controls in each compliance report. Not filtered by namespace or severity.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 58
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1,
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 0.1
+                  },
+                  {
+                    "color": "red",
+                    "value": 0.3
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "orientation": "horizontal",
+            "displayMode": "basic",
+            "showUnfilled": true,
+            "valueMode": "color",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "sum by (title) (trivy_cluster_compliance{status=\"Fail\"}) / sum by (title) (trivy_cluster_compliance)",
+              "legendFormat": "{{title}}",
+              "instant": true,
+              "range": false
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Failed compliance controls",
+          "description": "Controls with at least one failing check. Failures is the number of failing checks behind the control.",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 64
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Severity"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "Critical": {
+                            "color": "dark-red",
+                            "index": 0
+                          },
+                          "High": {
+                            "color": "red",
+                            "index": 1
+                          },
+                          "Medium": {
+                            "color": "orange",
+                            "index": 2
+                          },
+                          "Low": {
+                            "color": "yellow",
+                            "index": 3
+                          },
+                          "Unknown": {
+                            "color": "text",
+                            "index": 4
+                          },
+                          "CRITICAL": {
+                            "text": "Critical",
+                            "color": "dark-red",
+                            "index": 5
+                          },
+                          "HIGH": {
+                            "text": "High",
+                            "color": "red",
+                            "index": 6
+                          },
+                          "MEDIUM": {
+                            "text": "Medium",
+                            "color": "orange",
+                            "index": 7
+                          },
+                          "LOW": {
+                            "text": "Low",
+                            "color": "yellow",
+                            "index": 8
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Control"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Failures"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false
+            },
+            "sortBy": [
+              {
+                "displayName": "Failures",
+                "desc": true
+              }
+            ]
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true
+                },
+                "renameByName": {
+                  "severity": "Severity",
+                  "title": "Benchmark",
+                  "compliance_id": "Control",
+                  "compliance_name": "Name",
+                  "Value": "Failures"
+                },
+                "indexByName": {
+                  "severity": 0,
+                  "title": 1,
+                  "compliance_id": 2,
+                  "compliance_name": 3,
+                  "Value": 4
+                }
+              }
+            }
+          ],
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "max by (severity, title, compliance_id, compliance_name) (trivy_compliance_info{status=\"Fail\", severity=~\"(?i)$severity\"})",
+              "format": "table",
+              "instant": true,
+              "range": false
+            }
+          ]
+        }
+      ]
+    }

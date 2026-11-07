@@ -7,6 +7,14 @@ operator:
   # required for dashboard
   metricsVulnIdEnabled: true
 
+  # One series per finding, shown in the Trivy Operator - Findings dashboard
+  metricsExposedSecretInfo: true
+  metricsConfigAuditInfo: true
+  metricsRbacAssessmentInfo: true
+  metricsInfraAssessmentInfo: true
+  metricsImageInfo: true
+  metricsClusterComplianceInfo: true
+
 serviceMonitor:
   enabled: true
   interval: 2m
@@ -34,3 +42,7 @@ resources:
 trivy:
   storageClassName: local-path
   storageSize: 5Gi
+
+  additionalVulnerabilityReportFields: 'Target,Class,PackagePath,PackageType'
+
+  skipFiles: /etc/ssl/private/ssl-cert-snakeoil.key # Debian ssl-cert placeholder key

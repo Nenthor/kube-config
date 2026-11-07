@@ -40,5 +40,5 @@ resources:
   - grafana-contactpoint-secret.yaml
   - grafana-dashboard-homelab.yaml
   - grafana-dashboard-traefik.yaml
-  - grafana-dashboard-trivy-operator-overview.yaml
   - grafana-dashboard-trivy-operator-vulnerabilities.yaml
+  - grafana-dashboard-trivy-operator-findings.yaml
