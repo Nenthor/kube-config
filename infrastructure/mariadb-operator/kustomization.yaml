@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
   - name: mariadb-operator
     repo: oci://ghcr.io/mariadb-operator/charts
-    version: 26.10.1
+    version: 26.10.2
     releaseName: mariadb-operator
     namespace: mariadb-operator
     valuesFile: values.yaml
