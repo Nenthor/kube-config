@@ -88,4 +88,5 @@ gitea:
 
 signing:
   enabled: true
-  existingSecret: signing-secret
+  ssh:
+    existingSecret: signing-secret
