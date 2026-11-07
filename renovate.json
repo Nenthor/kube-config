@@ -1,11 +1,20 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
-  "timezone": "Europe/Berlin",
-  "labels": ["dependencies"],
+  "extends": [
+    "config:best-practices",
+    ":semanticCommits",
+    ":separateMultipleMajorReleases",
+    ":timezone(Europe/Berlin)"
+  ],
 
-  "platformAutomerge": true,
   "minimumReleaseAge": "3 days",
+
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "schedule": ["at any time"],
+    "minimumReleaseAge": null
+  },
 
   "helm-values": {
     "description": "Scan values.yaml files",
@@ -20,24 +29,18 @@
     }
   ],
 
-  "vulnerabilityAlerts": {
-    "description": "Security fixes skip the release-age hold and merge whenever.",
-    "labels": ["security"],
-    "minimumReleaseAge": "0 days",
-    "automerge": true,
-    "schedule": ["at any time"]
-  },
-
   "packageRules": [
     {
-      "description": "Automerge all patch updates.",
-      "matchUpdateTypes": ["patch"],
+      "description": "Automerge patch, pin and digest updates for all packages.",
+      "matchUpdateTypes": ["patch", "pin", "pinDigest", "digest"],
+      "labels": ["dependencies", "non-major"],
       "automerge": true
     },
     {
       "description": "Automerge minor updates for stable (>= 1.0.0) packages.",
       "matchUpdateTypes": ["minor"],
-      "matchCurrentVersion": "!/^0/",
+      "matchCurrentVersion": "!/^v?0/",
+      "labels": ["dependencies", "non-major"],
       "automerge": true
     },
     {
