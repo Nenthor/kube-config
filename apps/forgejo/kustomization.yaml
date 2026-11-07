@@ -11,4 +11,5 @@ helmCharts:
 
 resources:
   - db-secret.yaml
+  - signing-secret.yaml
   - ingress-route-middleware.yaml

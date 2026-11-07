@@ -85,3 +85,8 @@ gitea:
         secretKeyRef:
           name: forgejo-db-credentials
           key: password
+
+signing:
+  enabled: true
+  ssh:
+    existingSecret: signing-secret
