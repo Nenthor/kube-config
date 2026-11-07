@@ -54,6 +54,11 @@
       "matchPackageNames": ["/argoproj/argo-cd/"],
       "matchUpdateTypes": ["minor", "major"],
       "automerge": false
+    },
+    {
+      "description": "git.nentwich.dev images are owned by argocd-image-updater",
+      "matchPackageNames": ["git.nentwich.dev/**"],
+      "enabled": false
     }
   ]
 }
