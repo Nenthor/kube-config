@@ -17,6 +17,9 @@ spec:
     spec:
       automountServiceAccountToken: false
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -24,14 +27,19 @@ spec:
           image: git.nentwich.dev/nentwich/portfolio:1.0.0
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
-              add: ['NET_BIND_SERVICE', 'CHOWN', 'SETUID', 'SETGID']
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           env:
             - name: PORT
-              value: '80'
+              value: '8080'
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: conf-d
+              mountPath: /etc/nginx/conf.d
           resources:
             requests:
               cpu: 10m
@@ -39,3 +47,10 @@ spec:
             limits:
               cpu: 300m
               memory: 128Mi
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 16Mi
+        - name: conf-d
+          emptyDir:
+            sizeLimit: 1Mi
