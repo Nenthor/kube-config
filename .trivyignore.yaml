@@ -71,7 +71,6 @@ misconfigurations:
       - apps_open-webui.yaml
       - apps_forgejo.yaml
       - apps_homepage.yaml
-      - apps_portfolio.yaml
       - infrastructure_crowdsec.yaml
       - infrastructure_metallb.yaml
       - infrastructure_monitoring.yaml
@@ -80,7 +79,6 @@ misconfigurations:
   - id: AVD-KSV-0118
     paths:
       - apps_forgejo.yaml
-      - apps_open-webui.yaml
       - infrastructure_metallb.yaml
     statement: Same containers as AVD-KSV-0014 above - vendored chart defaults, not overridden pending verification.
 

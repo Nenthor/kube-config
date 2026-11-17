@@ -21,6 +21,38 @@ tika:
     limits:
       cpu: '1'
       memory: 2Gi
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 35002
+    runAsGroup: 35002
+    fsGroup: 35002
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+
+websocket:
+  redis:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 999
+      runAsGroup: 1000
+      fsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ['ALL']
+
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: ['ALL']
 
 persistence:
   enabled: true
