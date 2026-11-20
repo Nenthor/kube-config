@@ -7,4 +7,4 @@ resources:
   - credentials.yaml
 images:
   - name: git.nentwich.dev/nentwich/crabtrades
-    newTag: 1.1.6
+    newTag: 1.1.7
