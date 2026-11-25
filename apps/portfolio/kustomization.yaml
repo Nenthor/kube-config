@@ -6,4 +6,4 @@ resources:
   - service.yaml
 images:
   - name: git.nentwich.dev/nentwich/portfolio
-    newTag: 1.3.4
+    newTag: 1.3.5
